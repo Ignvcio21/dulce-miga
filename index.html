@@ -102,22 +102,35 @@ html, body {
 .page-title { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; font-weight: 700; color: var(--text-primary); }
 
 /* ── HERO STRIP ──────────────────────────────── */
-.hero-strip {
+/* ── HERO CAROUSEL ───────────────────────────── */
+.hero-carousel {
   margin: 20px 16px 0;
-  background: linear-gradient(135deg, var(--accent) 0%, #c45f78 100%);
-  border-radius: 18px; padding: 22px 22px;
-  display: flex; align-items: center; justify-content: space-between;
-  overflow: hidden; position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
 }
-.hero-strip::after {
+.hero-track {
+  display: flex;
+  transition: transform .5s cubic-bezier(.4,0,.2,1);
+}
+.hero-slide {
+  min-width: 100%;
+  padding: 22px 22px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.hero-slide::after {
   content: ''; position: absolute;
   width: 140px; height: 140px;
   background: rgba(255,255,255,.08); border-radius: 50%;
   right: -30px; top: -40px;
 }
+.hero-slide-1 { background: linear-gradient(135deg, var(--accent) 0%, #c45f78 100%); }
+.hero-slide-2 { background: linear-gradient(135deg, #A85570 0%, #7a3a52 100%); }
+.hero-slide-3 { background: linear-gradient(135deg, #c4607a 0%, #a04060 100%); }
 .hero-text { flex: 1; }
 .hero-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.7); margin-bottom: 4px; }
-.hero-title { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 700; color: #fff; line-height: 1.2; max-width: 180px; }
+.hero-title { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 700; color: #fff; line-height: 1.2; max-width: 200px; }
 .hero-sub { margin-top: 8px; font-size: 12px; color: rgba(255,255,255,.75); }
 .hero-icon {
   width: 72px; height: 72px; flex-shrink: 0; margin-left: 12px;
@@ -126,6 +139,20 @@ html, body {
   display: flex; align-items: center; justify-content: center;
   border: 1px solid rgba(255,255,255,.25);
 }
+.hero-dots {
+  display: flex; justify-content: center; gap: 6px;
+  padding: 10px 0 4px;
+}
+.hero-dot {
+  width: 6px; height: 6px; border-radius: 3px;
+  background: var(--accent-light); opacity: .4;
+  transition: width .3s, opacity .3s;
+  cursor: pointer;
+}
+.hero-dot.active { width: 18px; opacity: 1; background: var(--accent); }
+.delivery-list { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.delivery-item { font-size: 12px; color: rgba(255,255,255,.9); display: flex; align-items: center; gap: 6px; }
+.delivery-item::before { content:''; width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.7); flex-shrink:0; }
 
 /* ── SECTION HEADER ──────────────────────────── */
 .section-header { padding: 24px 20px 12px; display: flex; align-items: baseline; justify-content: space-between; }
@@ -437,22 +464,70 @@ html, body {
     </div>
   </header>
 
-  <div class="hero-strip">
-    <div class="hero-text">
-      <div class="hero-label">Nuevo · Esta semana</div>
-      <div class="hero-title">Hecho con amor, ingredientes frescos</div>
-      <div class="hero-sub">Pedidos con 48 h de anticipación</div>
+  <div class="hero-carousel" id="heroCarousel">
+    <div class="hero-track" id="heroTrack">
+
+      <!-- Slide 1: bienvenida -->
+      <div class="hero-slide hero-slide-1">
+        <div class="hero-text">
+          <div class="hero-label">Nuevo · Esta semana</div>
+          <div class="hero-title">Hecho con amor, ingredientes frescos</div>
+          <div class="hero-sub">Pedidos con 48 h de anticipación</div>
+        </div>
+        <div class="hero-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a5 5 0 0 1 5 5c0 1.5-.7 2.8-1.5 3.5H8.5C7.7 9.8 7 8.5 7 7a5 5 0 0 1 5-5z"/>
+            <path d="M3 11h18v2a9 9 0 0 1-18 0v-2z"/>
+            <line x1="12" y1="2" x2="12" y2="4"/>
+            <line x1="8" y1="11" x2="8" y2="21"/>
+            <line x1="12" y1="11" x2="12" y2="21"/>
+            <line x1="16" y1="11" x2="16" y2="21"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Slide 2: despacho -->
+      <div class="hero-slide hero-slide-2">
+        <div class="hero-text">
+          <div class="hero-label">Entregas · Despacho</div>
+          <div class="hero-title">Te llevamos el sabor a casa</div>
+          <div class="delivery-list">
+            <span class="delivery-item">Santiago Centro</span>
+            <span class="delivery-item">Providencia</span>
+            <span class="delivery-item">Las Condes</span>
+          </div>
+        </div>
+        <div class="hero-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Slide 3: retiro -->
+      <div class="hero-slide hero-slide-3">
+        <div class="hero-text">
+          <div class="hero-label">Retiro · Pick up</div>
+          <div class="hero-title">Retira tu pedido sin costo</div>
+          <div class="delivery-list">
+            <span class="delivery-item">Lunes a viernes 10:00–19:00</span>
+            <span class="delivery-item">Sábados 10:00–14:00</span>
+            <span class="delivery-item">Coordina por WhatsApp</span>
+          </div>
+        </div>
+        <div class="hero-icon">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+      </div>
+
     </div>
-    <div class="hero-icon">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2a5 5 0 0 1 5 5c0 1.5-.7 2.8-1.5 3.5H8.5C7.7 9.8 7 8.5 7 7a5 5 0 0 1 5-5z"/>
-        <path d="M3 11h18v2a9 9 0 0 1-18 0v-2z"/>
-        <line x1="12" y1="2" x2="12" y2="4"/>
-        <line x1="8" y1="11" x2="8" y2="21"/>
-        <line x1="12" y1="11" x2="12" y2="21"/>
-        <line x1="16" y1="11" x2="16" y2="21"/>
-      </svg>
-    </div>
+  </div>
+  <div class="hero-dots" id="heroDots">
+    <div class="hero-dot active" onclick="goSlide(0)"></div>
+    <div class="hero-dot" onclick="goSlide(1)"></div>
+    <div class="hero-dot" onclick="goSlide(2)"></div>
   </div>
 
   <div class="section-header">
@@ -996,6 +1071,16 @@ bindCategories('catalogCategories', 'catalogGrid', 'catalogCount', false);
 renderGrid('homeGrid', 'all', 'homeCount', true);
 renderGrid('catalogGrid', 'all', 'catalogCount', false);
 updateCartBadges();
+
+// ── HERO CAROUSEL ─────────────────────────────
+let heroIdx = 0;
+const heroSlides = 3;
+function goSlide(idx) {
+  heroIdx = idx;
+  document.getElementById('heroTrack').style.transform = `translateX(-${idx * 100}%)`;
+  document.querySelectorAll('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+setInterval(() => goSlide((heroIdx + 1) % heroSlides), 5000);
 
 </script>
 </body>

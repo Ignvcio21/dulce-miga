@@ -1370,22 +1370,49 @@ async function shareOrderWhatsApp() {
   try {
     const canvas = generateReceiptCanvas();
     const dataURL = canvas.toDataURL('image/png');
-    const res = await fetch(dataURL);
-    const blob = await res.blob();
-    const file = new File([blob], 'pedido-dulce-miga.png', {type:'image/png'});
-    if (navigator.canShare && navigator.canShare({files:[file]})) {
-      await navigator.share({files:[file], title:'Pedido Dulce Miga'});
-      cart = []; updateCartBadges(); renderCart();
-      showToast('Comprobante enviado');
-    } else {
-      fallbackWhatsApp();
-    }
+    showReceiptModal(dataURL);
   } catch(e) {
-    if (e && e.name !== 'AbortError') fallbackWhatsApp();
+    fallbackWhatsApp();
   } finally {
     btn.innerHTML = btnOriginal;
     btn.disabled = false;
   }
+}
+
+function showReceiptModal(dataURL) {
+  const existing = document.getElementById('receiptModal');
+  if (existing) existing.remove();
+
+  const waMsg = encodeURIComponent('Hola! Te envío mi comprobante de pedido 👇');
+  const waURL = 'https://wa.me/56984440866?text=' + waMsg;
+
+  const modal = document.createElement('div');
+  modal.id = 'receiptModal';
+  modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;overflow-y:auto;';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:20px;width:100%;max-width:480px;overflow:hidden;margin:auto;">
+      <div style="background:#D4738A;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
+        <span style="color:#fff;font-weight:700;font-size:15px;">Comprobante listo</span>
+        <button onclick="document.getElementById('receiptModal').remove()" style="background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;line-height:1;">✕</button>
+      </div>
+      <img src="${dataURL}" style="width:100%;display:block;" alt="Comprobante">
+      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+        <p style="margin:0;font-size:13px;color:#9C6B78;text-align:center;line-height:1.5;">
+          1. Descarga la imagen 👇<br>
+          2. Abre WhatsApp y adjúntala
+        </p>
+        <a href="${dataURL}" download="pedido-dulce-miga.png"
+          style="display:block;text-align:center;background:#D4738A;color:#fff;padding:13px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;">
+          ⬇️ Guardar comprobante
+        </a>
+        <a href="${waURL}" target="_blank"
+          onclick="setTimeout(()=>{cart=[];updateCartBadges();renderCart();document.getElementById('receiptModal').remove();},500)"
+          style="display:block;text-align:center;background:#25D366;color:#fff;padding:13px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;">
+          Abrir WhatsApp →
+        </a>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
 }
 
 function fallbackWhatsApp() {

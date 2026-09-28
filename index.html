@@ -363,6 +363,7 @@ html, body {
   transition: opacity .25s, transform .25s; z-index: 300; white-space: nowrap;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+@keyframes slideUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
 
 /* ── CHECKOUT MODAL ──────────────────────────── */
 .modal-backdrop {
@@ -1301,6 +1302,9 @@ auth.onAuthStateChanged(async user => {
   if (currentPage === 'perfil') renderProfilePage();
 });
 
+// Check if arriving from a password reset email link
+checkPasswordResetCode();
+
 async function registerUser(name, email, password, phone) {
   const cred = await auth.createUserWithEmailAndPassword(email, password);
   await db.collection('users').doc(cred.user.uid).set({
@@ -1317,11 +1321,20 @@ async function handleForgotPassword() {
   if (!email) { msgEl.textContent = 'Ingresa tu correo primero.'; msgEl.style.color = '#c0392b'; return; }
   msgEl.textContent = 'Enviando...'; msgEl.style.color = 'var(--text-muted)';
   try {
-    await auth.sendPasswordResetEmail(email);
-    msgEl.textContent = '✅ Te enviamos un correo para restablecer tu contraseña.';
+    const actionCodeSettings = {
+      url: window.location.origin + window.location.pathname,
+      handleCodeInApp: false
+    };
+    await auth.sendPasswordResetEmail(email, actionCodeSettings);
+    msgEl.innerHTML = '✅ Revisa tu bandeja de entrada.<br><span style="color:var(--text-muted)">Si no lo ves, busca en spam.</span>';
     msgEl.style.color = 'var(--accent-deep)';
   } catch(e) {
-    msgEl.textContent = 'No encontramos una cuenta con ese correo.';
+    const msgs = {
+      'auth/user-not-found': 'No encontramos una cuenta con ese correo.',
+      'auth/invalid-email': 'El correo no tiene un formato válido.',
+      'auth/too-many-requests': 'Demasiados intentos. Espera unos minutos.'
+    };
+    msgEl.textContent = msgs[e.code] || 'Ocurrió un error. Intenta de nuevo.';
     msgEl.style.color = '#c0392b';
   }
 }
@@ -1637,6 +1650,104 @@ function switchAuthTab(tab) {
   document.getElementById('tab-register').classList.toggle('active', tab === 'register');
   document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
   document.getElementById('form-register').style.display = tab === 'register' ? '' : 'none';
+}
+
+// ══════════════════════════════════════════════
+//  PASSWORD RESET CONFIRMATION (via email link)
+// ══════════════════════════════════════════════
+function checkPasswordResetCode() {
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get('mode');
+  const oobCode = params.get('oobCode');
+  if (mode === 'resetPassword' && oobCode) {
+    // Clean URL without reloading
+    window.history.replaceState({}, document.title, window.location.pathname);
+    showResetPasswordModal(oobCode);
+  }
+}
+
+function showResetPasswordModal(oobCode) {
+  const overlay = document.createElement('div');
+  overlay.id = 'resetPasswordOverlay';
+  overlay.style.cssText = `
+    position:fixed;inset:0;z-index:9999;
+    background:rgba(45,27,30,.6);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;
+  `;
+  overlay.innerHTML = `
+    <div style="
+      background:var(--surface);
+      border-radius:24px;
+      padding:32px 28px;
+      width:100%;max-width:380px;
+      box-shadow:0 24px 60px rgba(45,27,30,.2);
+      animation:slideUp .3s ease;
+    ">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:56px;height:56px;background:linear-gradient(135deg,var(--accent-light),var(--accent));border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:26px;">🔑</div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:6px;">Nueva contraseña</div>
+        <div style="font-size:13px;color:var(--text-secondary);">Elige una contraseña segura para tu cuenta</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="position:relative;">
+          <input type="password" id="resetPwd1" placeholder="Nueva contraseña" autocomplete="new-password"
+            style="width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--surface-2);color:var(--text-primary);outline:none;transition:border .2s;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div style="position:relative;">
+          <input type="password" id="resetPwd2" placeholder="Confirmar contraseña" autocomplete="new-password"
+            style="width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--surface-2);color:var(--text-primary);outline:none;transition:border .2s;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div id="resetPwdError" style="font-size:13px;color:#c0392b;display:none;padding:0 4px;"></div>
+        <button onclick="confirmNewPassword('${oobCode}')" style="
+          width:100%;padding:15px;
+          background:linear-gradient(135deg,var(--accent),var(--accent-deep));
+          color:#fff;border:none;border-radius:12px;
+          font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;
+          cursor:pointer;margin-top:4px;
+          box-shadow:0 4px 16px rgba(212,115,138,.4);
+          transition:opacity .2s;
+        " onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
+          Guardar nueva contraseña
+        </button>
+        <button onclick="document.getElementById('resetPasswordOverlay').remove()" style="
+          background:none;border:none;color:var(--text-muted);font-size:13px;
+          font-family:'DM Sans',sans-serif;cursor:pointer;padding:4px;
+        ">Cancelar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+async function confirmNewPassword(oobCode) {
+  const pwd1 = document.getElementById('resetPwd1').value;
+  const pwd2 = document.getElementById('resetPwd2').value;
+  const errEl = document.getElementById('resetPwdError');
+  errEl.style.display = 'none';
+  if (!pwd1 || pwd1.length < 6) { errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.'; errEl.style.display = 'block'; return; }
+  if (pwd1 !== pwd2) { errEl.textContent = 'Las contraseñas no coinciden.'; errEl.style.display = 'block'; return; }
+  const btn = document.querySelector('#resetPasswordOverlay button');
+  btn.textContent = 'Guardando...'; btn.disabled = true;
+  try {
+    await auth.verifyPasswordResetCode(oobCode);
+    await auth.confirmPasswordReset(oobCode, pwd1);
+    document.getElementById('resetPasswordOverlay').remove();
+    showToast('✅ Contraseña actualizada. Ya puedes iniciar sesión.');
+    goTo('perfil');
+  } catch(e) {
+    btn.textContent = 'Guardar nueva contraseña'; btn.disabled = false;
+    const msgs = {
+      'auth/expired-action-code': 'El enlace ha caducado. Solicita uno nuevo.',
+      'auth/invalid-action-code': 'El enlace ya fue usado o no es válido.',
+      'auth/weak-password': 'La contraseña es demasiado débil.'
+    };
+    errEl.textContent = msgs[e.code] || 'Ocurrió un error. Intenta de nuevo.';
+    errEl.style.display = 'block';
+  }
 }
 
 async function handleLogin() {

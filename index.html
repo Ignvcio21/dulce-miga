@@ -8,6 +8,60 @@
 <title>Dulce Miga</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap">
 <style>
+/* ── PRINT STYLES ────────────────────────────── */
+@media print {
+  body > *:not(#print-order) { display: none !important; }
+  #print-order { display: block !important; }
+  @page { margin: 0; size: A4; }
+}
+#print-order {
+  display: none;
+  font-family: 'DM Sans', sans-serif;
+  background: #fff;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+#print-order .po-header {
+  background: #D4738A;
+  padding: 36px 32px 28px;
+  text-align: center;
+}
+#print-order .po-brand {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 32px; font-weight: 700; color: #fff; letter-spacing: -.5px;
+}
+#print-order .po-sub {
+  font-size: 11px; color: rgba(255,255,255,.7);
+  letter-spacing: .14em; text-transform: uppercase; margin-top: 4px;
+}
+#print-order .po-divider { width: 40px; height: 1px; background: rgba(255,255,255,.3); margin: 16px auto 12px; }
+#print-order .po-label { font-size: 11px; color: rgba(255,255,255,.6); letter-spacing: .1em; text-transform: uppercase; }
+#print-order .po-body { padding: 24px 32px; }
+#print-order .po-meta { display: flex; justify-content: space-between; font-size: 11px; color: #9C6B78; margin-bottom: 18px; }
+#print-order .po-section-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #C4A0AA; margin-bottom: 14px; }
+#print-order .po-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px dashed #F5D5DC; }
+#print-order .po-item:last-child { border-bottom: none; }
+#print-order .po-item-icon { width: 48px; height: 48px; border-radius: 10px; background: #FFF0F3; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+#print-order .po-item-info { flex: 1; }
+#print-order .po-item-name { font-size: 14px; font-weight: 600; color: #2D1B1E; margin-bottom: 2px; }
+#print-order .po-item-detail { font-size: 11px; color: #9C6B78; }
+#print-order .po-item-price { font-size: 15px; font-weight: 700; color: #2D1B1E; white-space: nowrap; }
+#print-order .po-totals { margin-top: 18px; border-top: 1px solid #F5D5DC; padding-top: 14px; }
+#print-order .po-row { display: flex; justify-content: space-between; font-size: 12px; color: #9C6B78; margin-bottom: 8px; }
+#print-order .po-row.green { color: #3B9A5A; }
+#print-order .po-total-box { background: #D4738A; border-radius: 12px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+#print-order .po-total-label { font-family: 'Playfair Display', serif; font-size: 17px; color: #fff; font-weight: 700; }
+#print-order .po-total-value { font-size: 24px; font-weight: 700; color: #fff; }
+#print-order .po-pickup { margin-top: 20px; border-top: 1px solid #F5D5DC; padding-top: 16px; }
+#print-order .po-pickup-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+#print-order .po-pickup-dot { width: 8px; height: 8px; border-radius: 50%; background: #D4738A; flex-shrink: 0; margin-top: 5px; }
+#print-order .po-pickup-name { font-size: 12px; font-weight: 600; color: #2D1B1E; }
+#print-order .po-pickup-time { font-size: 11px; color: #9C6B78; }
+#print-order .po-note { background: #FFF0F3; border-radius: 10px; padding: 12px 16px; margin-top: 16px; text-align: center; font-size: 11px; color: #9C6B78; }
+#print-order .po-footer { text-align: center; padding: 20px 0 10px; font-family: 'Playfair Display', serif; font-size: 14px; color: #C4A0AA; font-style: italic; }
+</style>
+<style>
 :root {
   --bg: #FFF0F3;
   --surface: #FFFFFF;
@@ -637,6 +691,47 @@ html, body {
 </div>
 
 <!-- ═══════════════════════════════════════════
+     PRINT ORDER
+════════════════════════════════════════════ -->
+<div id="print-order">
+  <div class="po-header">
+    <div class="po-brand">Dulce Miga</div>
+    <div class="po-sub">Repostería Artesanal · Talca</div>
+    <div class="po-divider"></div>
+    <div class="po-label">Comprobante de pedido</div>
+  </div>
+  <div class="po-body">
+    <div class="po-meta">
+      <span id="po-num">Pedido #001</span>
+      <span id="po-date"></span>
+    </div>
+    <div class="po-section-label">Productos</div>
+    <div id="po-items"></div>
+    <div class="po-totals">
+      <div class="po-row"><span>Subtotal</span><span id="po-subtotal"></span></div>
+      <div class="po-row green"><span>Retiro en punto de entrega</span><span>$0</span></div>
+      <div class="po-total-box">
+        <span class="po-total-label">Total</span>
+        <span class="po-total-value" id="po-total"></span>
+      </div>
+    </div>
+    <div class="po-pickup">
+      <div class="po-section-label">Puntos de retiro</div>
+      <div class="po-pickup-item">
+        <div class="po-pickup-dot"></div>
+        <div><div class="po-pickup-name">Plaza de Armas, Talca</div><div class="po-pickup-time">Martes y jueves · 16:00 – 17:00</div></div>
+      </div>
+      <div class="po-pickup-item">
+        <div class="po-pickup-dot"></div>
+        <div><div class="po-pickup-name">Universidad Santo Tomás, Talca</div><div class="po-pickup-time">Lunes y viernes · 12:00 – 14:00</div></div>
+      </div>
+    </div>
+    <div class="po-note">Pedidos con 48 h de anticipación &nbsp;·&nbsp; <strong style="color:#D4738A;">+56 9 8444-0866</strong></div>
+    <div class="po-footer">Hecho con amor ♡</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
      TOAST
 ════════════════════════════════════════════ -->
 <div class="toast" id="toast"></div>
@@ -945,6 +1040,10 @@ function renderCart() {
     <button class="checkout-btn" onclick="openCheckout()">
       ${SVG.check} Confirmar pedido
     </button>
+    <button class="checkout-btn" onclick="printOrder()" style="background:var(--surface-2);color:var(--accent);border:1.5px solid var(--accent);margin-top:10px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Descargar comprobante PDF
+    </button>
     <p class="whatsapp-note">Te contactaremos por WhatsApp para coordinar entrega y pago</p>
   </div>`;
   el.innerHTML = html;
@@ -1075,6 +1174,31 @@ bindCategories('catalogCategories', 'catalogGrid', 'catalogCount', false);
 renderGrid('homeGrid', 'all', 'homeCount', true);
 renderGrid('catalogGrid', 'all', 'catalogCount', false);
 updateCartBadges();
+
+// ── PDF / PRINT ───────────────────────────────
+function printOrder() {
+  if (cart.length === 0) return;
+  const now = new Date();
+  const fecha = now.toLocaleDateString('es-CL', {day:'2-digit', month:'short', year:'numeric'});
+  const hora = now.toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'});
+  const num = String(Math.floor(Math.random()*900)+100);
+  document.getElementById('po-num').textContent = 'Pedido #' + num;
+  document.getElementById('po-date').textContent = fecha + ' · ' + hora;
+  const subtotal = cartTotal();
+  document.getElementById('po-subtotal').textContent = '$' + subtotal.toLocaleString('es-CL');
+  document.getElementById('po-total').textContent = '$' + subtotal.toLocaleString('es-CL');
+  const emojis = {'pay':'🍰','queque':'🎂','brownie':'🍫','galleta':'🍪','especial':'🍓'};
+  document.getElementById('po-items').innerHTML = cart.map(i => `
+    <div class="po-item">
+      <div class="po-item-icon">${emojis[i.product.category] || '🍰'}</div>
+      <div class="po-item-info">
+        <div class="po-item-name">${i.product.name}</div>
+        <div class="po-item-detail">${i.sizeName} · ${i.qty} unidad${i.qty>1?'es':''}</div>
+      </div>
+      <div class="po-item-price">$${(i.sizePrice*i.qty).toLocaleString('es-CL')}</div>
+    </div>`).join('');
+  window.print();
+}
 
 // ── HERO CAROUSEL ─────────────────────────────
 let heroIdx = 0;

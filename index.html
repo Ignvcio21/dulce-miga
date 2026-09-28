@@ -7,6 +7,9 @@
 <meta name="theme-color" content="#D4738A">
 <title>Dulce Miga</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 <style>
 :root {
   --bg: #FFF0F3;
@@ -431,6 +434,58 @@ html, body {
 }
 .nav-badge[hidden] { display: none !important; }
 .nav-label { font-size: 9px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-family: 'DM Sans', sans-serif; }
+
+/* ── PERFIL / AUTH PAGE ──────────────────────── */
+.auth-tabs { display: flex; gap: 0; margin-bottom: 20px; border-radius: 12px; overflow: hidden; border: 1.5px solid var(--border); }
+.auth-tab { flex: 1; padding: 11px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: var(--surface-2); color: var(--text-secondary); transition: background .2s, color .2s; }
+.auth-tab.active { background: var(--accent); color: #fff; }
+.profile-card { background: var(--surface); border-radius: 16px; border: 1px solid var(--border); padding: 20px; margin: 0 16px 16px; }
+.profile-avatar { width: 64px; height: 64px; border-radius: 20px; background: var(--accent-light); display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 12px; color: var(--accent-deep); font-weight: 700; font-family: 'Playfair Display', serif; }
+.profile-name { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.profile-email { font-size: 13px; color: var(--text-secondary); text-align: center; margin-bottom: 16px; }
+.coins-display { display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.coins-icon { font-size: 24px; }
+.coins-amount { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+.coins-label { font-size: 12px; color: rgba(255,255,255,.8); font-weight: 500; }
+.progress-wrap { margin-bottom: 16px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }
+.progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 3px; transition: width .4s ease; }
+.auth-form { display: flex; flex-direction: column; gap: 12px; }
+.auth-input { border: 1.5px solid var(--border); border-radius: 12px; padding: 13px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-primary); background: var(--surface); outline: none; transition: border-color .2s; }
+.auth-input:focus { border-color: var(--accent); }
+.auth-input::placeholder { color: var(--text-muted); }
+.auth-btn { background: var(--accent); color: #fff; border: none; border-radius: 14px; padding: 15px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: background .15s, transform .12s; }
+.auth-btn:active { transform: scale(.98); background: var(--accent-deep); }
+.auth-error { font-size: 13px; color: #c0392b; background: #fdecea; border-radius: 10px; padding: 10px 14px; display: none; }
+.rewards-list { display: flex; flex-direction: column; gap: 10px; }
+.reward-item { background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; }
+.reward-emoji { font-size: 28px; }
+.reward-info { flex: 1; }
+.reward-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
+.reward-coins { font-size: 12px; color: var(--text-secondary); }
+.reward-btn { background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 8px 14px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s, opacity .15s; }
+.reward-btn:disabled { opacity: .45; cursor: not-allowed; }
+.reward-btn:not(:disabled):active { background: var(--accent-deep); }
+.redeem-section { display: flex; gap: 8px; }
+.redeem-input { flex: 1; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text-primary); background: var(--surface); outline: none; transition: border-color .2s; text-transform: uppercase; letter-spacing: .05em; }
+.redeem-input:focus { border-color: var(--accent); }
+.redeem-btn { background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 12px 16px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: background .15s; }
+.redeem-btn:active { background: var(--accent-deep); }
+.logout-btn { width: 100%; background: var(--surface-2); color: var(--text-secondary); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 4px; transition: background .15s; }
+.logout-btn:active { background: var(--border); }
+.section-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; padding: 0 16px; }
+/* ── ADMIN PAGE ───────────────────────────────── */
+.admin-search-row { display: flex; gap: 8px; margin-bottom: 16px; }
+.admin-result { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 16px; }
+.admin-user-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.admin-user-detail { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
+.admin-coins-badge { display: inline-block; background: var(--accent-light); color: var(--accent-deep); border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: 700; margin: 8px 0; }
+.generated-code { background: var(--surface-2); border: 2px dashed var(--accent); border-radius: 14px; padding: 16px; text-align: center; margin-top: 12px; }
+.generated-code-val { font-family: 'DM Sans', monospace; font-size: 28px; font-weight: 700; letter-spacing: .15em; color: var(--accent-deep); }
+.generated-code-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+/* ── REWARD MODAL ─────────────────────────────── */
+.reward-modal-code { font-family: 'DM Sans', monospace; font-size: 26px; font-weight: 700; letter-spacing: .12em; color: var(--accent-deep); background: var(--surface-2); border: 2px dashed var(--accent); border-radius: 14px; padding: 14px 20px; text-align: center; margin: 12px 0; }
 </style>
 </head>
 <body>
@@ -637,6 +692,60 @@ html, body {
 </div>
 
 <!-- ═══════════════════════════════════════════
+     PÁGINA: PERFIL
+════════════════════════════════════════════ -->
+<div id="page-perfil" class="page">
+  <div class="page-header">
+    <div class="brand">
+      <span class="brand-eyebrow">Tu cuenta</span>
+      <div class="page-title">Perfil</div>
+    </div>
+  </div>
+  <div id="perfilContent" style="padding-top:16px;padding-bottom:100px;"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PÁGINA: ADMIN
+════════════════════════════════════════════ -->
+<div id="page-admin" class="page">
+  <div class="page-header">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="brand">
+        <span class="brand-eyebrow">Panel de control</span>
+        <div class="page-title">Admin</div>
+      </div>
+      <button onclick="goTo('inicio')" style="background:none;border:none;font-size:13px;color:var(--text-muted);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;">← Inicio</button>
+    </div>
+  </div>
+  <div style="padding:16px 0 100px;" id="adminContent">
+    <div class="profile-card">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:14px;">Buscar usuario</div>
+      <div class="admin-search-row">
+        <input type="email" id="adminSearchInput" class="auth-input" placeholder="correo@ejemplo.com" style="flex:1;margin:0;">
+        <button class="auth-btn" style="padding:13px 16px;border-radius:12px;white-space:nowrap;" onclick="adminSearchUser()">Buscar</button>
+      </div>
+      <div id="adminUserResult"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     REWARD MODAL
+════════════════════════════════════════════ -->
+<div class="modal-backdrop" id="rewardModalBackdrop" onclick="closeRewardModal()"></div>
+<div class="modal" id="rewardModal">
+  <div class="modal-icon" style="background:var(--accent-light);color:var(--accent-deep);">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+  </div>
+  <div class="modal-title" id="rewardModalTitle">¡Premio canjeado!</div>
+  <div class="modal-sub" id="rewardModalSub">Muestra este código al retirar tu pedido.</div>
+  <div class="reward-modal-code" id="rewardModalCode"></div>
+  <div class="modal-actions">
+    <button class="modal-btn-close" onclick="closeRewardModal()">Cerrar</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
      TOAST
 ════════════════════════════════════════════ -->
 <div class="toast" id="toast"></div>
@@ -670,9 +779,33 @@ html, body {
     </div>
     <span class="nav-label">Carrito</span>
   </button>
+  <button class="nav-item" id="nav-perfil" onclick="goTo('perfil')">
+    <div class="nav-icon-wrap">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+    <span class="nav-label">Perfil</span>
+  </button>
 </nav>
 
 <script>
+// ══════════════════════════════════════════════
+//  FIREBASE CONFIG
+// ══════════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(FIREBASE_CONFIG);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const ADMIN_EMAIL = "vidal.diaz.ignacio@gmail.com";
+let currentUser = null;
+let userProfile = null;
+
 // ══════════════════════════════════════════════
 //  SVG ICONS
 // ══════════════════════════════════════════════
@@ -751,13 +884,27 @@ let currentPage = 'inicio';
 //  NAVIGATION
 // ══════════════════════════════════════════════
 function goTo(page) {
+  // admin page only for admin user
+  if (page === 'admin') {
+    if (!currentUser || currentUser.email !== ADMIN_EMAIL) return;
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-admin').classList.add('active');
+    currentPage = 'admin';
+    window.scrollTo(0, 0);
+    return;
+  }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('nav-' + page).classList.add('active');
+  const pageEl = document.getElementById('page-' + page);
+  if (!pageEl) return;
+  pageEl.classList.add('active');
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
   currentPage = page;
   if (page === 'favoritos') renderFavorites();
   if (page === 'carrito') renderCart();
+  if (page === 'perfil') renderProfilePage();
   window.scrollTo(0, 0);
 }
 
@@ -969,6 +1116,9 @@ function closeModal() {
 }
 function sendWhatsApp() {
   let msg = '🛍️ *NUEVO PEDIDO — Dulce Miga*\n\n';
+  if (currentUser && userProfile) {
+    msg += `👤 Cliente: *${userProfile.name}*\n\n`;
+  }
   msg += '¡Hola! Me gustaría hacer el siguiente pedido:\n\n';
   msg += cart.map(i =>
     `▸ *${i.product.name}*\n` +
@@ -977,6 +1127,9 @@ function sendWhatsApp() {
   msg += `\n\n━━━━━━━━━━━━━━━━━\n`;
   msg += `💰 *Total: $${cartTotal().toLocaleString('es-CL')}*\n`;
   msg += `━━━━━━━━━━━━━━━━━\n\n`;
+  if (currentUser && userProfile && cartTotal() >= 8000) {
+    msg += `🪙 Recibirás +10 Dul Coins al confirmar entrega\n\n`;
+  }
   msg += `¿Cuál es la disponibilidad? 😊`;
   window.open('https://wa.me/56984440866?text=' + encodeURIComponent(msg), '_blank');
   closeModal(); cart = []; updateCartBadges(); renderCart();
@@ -1088,6 +1241,353 @@ function goSlide(idx) {
   document.querySelectorAll('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
 }
 setInterval(() => goSlide((heroIdx + 1) % heroSlides), 5000);
+
+// ══════════════════════════════════════════════
+//  REWARDS CATALOG
+// ══════════════════════════════════════════════
+const REWARDS = [
+  { id:'galleta', name:'Galleta gratis', coins:40, emoji:'🍪' },
+  { id:'brownie', name:'Brownie personal gratis', coins:50, emoji:'🍫' },
+  { id:'descuento10', name:'10% de descuento', coins:60, emoji:'🏷️' },
+  { id:'pay', name:'Pay personal gratis', coins:80, emoji:'🍰' },
+  { id:'descuento20', name:'20% de descuento', coins:100, emoji:'🎁' },
+];
+
+// ══════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════
+auth.onAuthStateChanged(async user => {
+  currentUser = user;
+  userProfile = null;
+  if (user) {
+    try {
+      const snap = await db.collection('users').doc(user.uid).get();
+      if (snap.exists) userProfile = snap.data();
+    } catch(e) { console.warn('Error loading profile', e); }
+    // Show admin nav button if admin
+    if (user.email === ADMIN_EMAIL) {
+      let adminBtn = document.getElementById('nav-admin');
+      if (!adminBtn) {
+        adminBtn = document.createElement('button');
+        adminBtn.className = 'nav-item';
+        adminBtn.id = 'nav-admin';
+        adminBtn.onclick = () => goTo('admin');
+        adminBtn.innerHTML = `<div class="nav-icon-wrap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M2 20c0-4 4-7 10-7s10 3 10 7"/><path d="M18 14l2 2 4-4"/></svg></div><span class="nav-label">Admin</span>`;
+        document.querySelector('.bottom-nav').appendChild(adminBtn);
+      }
+    }
+  } else {
+    const adminBtn = document.getElementById('nav-admin');
+    if (adminBtn) adminBtn.remove();
+  }
+  if (currentPage === 'perfil') renderProfilePage();
+});
+
+async function registerUser(name, email, password, phone) {
+  const cred = await auth.createUserWithEmailAndPassword(email, password);
+  await db.collection('users').doc(cred.user.uid).set({
+    name, email, phone, coins: 0,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+  userProfile = { name, email, phone, coins: 0 };
+}
+
+async function loginUser(email, password) {
+  await auth.signInWithEmailAndPassword(email, password);
+}
+
+function logoutUser() {
+  auth.signOut();
+  showToast('Sesión cerrada');
+}
+
+// ══════════════════════════════════════════════
+//  COINS / CODES
+// ══════════════════════════════════════════════
+async function redeemCode(code) {
+  if (!currentUser) { showToast('Inicia sesión primero'); return; }
+  const upper = code.trim().toUpperCase();
+  if (!upper) { showToast('Ingresa un código'); return; }
+  try {
+    const ref = db.collection('codes').doc(upper);
+    const snap = await ref.get();
+    if (!snap.exists) { showToast('Código no válido'); return; }
+    const data = snap.data();
+    if (data.used) { showToast('Código ya usado'); return; }
+    if (data.expiresAt < Date.now()) { showToast('Código expirado'); return; }
+    if (data.userId !== currentUser.uid) { showToast('Este código no es para tu cuenta'); return; }
+    // Mark used + add coins
+    await ref.update({ used: true });
+    const newCoins = (userProfile ? (userProfile.coins || 0) : 0) + 10;
+    await db.collection('users').doc(currentUser.uid).update({ coins: newCoins });
+    if (userProfile) userProfile.coins = newCoins;
+    showToast('¡+10 Dul Coins añadidos!');
+    renderProfilePage();
+  } catch(e) {
+    console.error(e);
+    showToast('Error al canjear código');
+  }
+}
+
+async function claimReward(rewardId) {
+  if (!currentUser || !userProfile) return;
+  const reward = REWARDS.find(r => r.id === rewardId);
+  if (!reward) return;
+  if ((userProfile.coins || 0) < reward.coins) { showToast('No tienes suficientes Dul Coins'); return; }
+  try {
+    const newCoins = userProfile.coins - reward.coins;
+    await db.collection('users').doc(currentUser.uid).update({ coins: newCoins });
+    userProfile.coins = newCoins;
+    const redeemCode = Math.random().toString(36).substring(2,9).toUpperCase();
+    const key = `${currentUser.uid}_${rewardId}_${Date.now()}`;
+    await db.collection('redemptions').doc(key).set({
+      userId: currentUser.uid,
+      rewardId,
+      redeemCode,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // Show reward modal
+    document.getElementById('rewardModalTitle').textContent = '¡Premio canjeado!';
+    document.getElementById('rewardModalSub').textContent = `${reward.emoji} ${reward.name} — Muestra este código al retirar.`;
+    document.getElementById('rewardModalCode').textContent = redeemCode;
+    document.getElementById('rewardModalBackdrop').classList.add('open');
+    document.getElementById('rewardModal').classList.add('open');
+    renderProfilePage();
+  } catch(e) {
+    console.error(e);
+    showToast('Error al canjear premio');
+  }
+}
+
+function closeRewardModal() {
+  document.getElementById('rewardModalBackdrop').classList.remove('open');
+  document.getElementById('rewardModal').classList.remove('open');
+}
+
+// ══════════════════════════════════════════════
+//  ADMIN
+// ══════════════════════════════════════════════
+async function searchUserByEmail(email) {
+  const snap = await db.collection('users').where('email', '==', email.trim().toLowerCase()).limit(1).get();
+  if (snap.empty) return null;
+  const doc = snap.docs[0];
+  return { uid: doc.id, ...doc.data() };
+}
+
+async function generateCoinCode(userId) {
+  const code = Math.random().toString(36).substring(2,8).toUpperCase();
+  await db.collection('codes').doc(code).set({
+    userId,
+    used: false,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    expiresAt: Date.now() + 48*60*60*1000
+  });
+  return code;
+}
+
+async function adminSearchUser() {
+  const email = document.getElementById('adminSearchInput').value;
+  const resultEl = document.getElementById('adminUserResult');
+  resultEl.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:8px 0;">Buscando...</div>';
+  try {
+    const user = await searchUserByEmail(email);
+    if (!user) {
+      resultEl.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:8px 0;">Usuario no encontrado.</div>';
+      return;
+    }
+    resultEl.innerHTML = `
+      <div class="admin-result" style="margin-top:12px;margin-bottom:0;">
+        <div class="admin-user-name">${user.name || '—'}</div>
+        <div class="admin-user-detail">📧 ${user.email}</div>
+        <div class="admin-user-detail">📱 ${user.phone || '—'}</div>
+        <div><span class="admin-coins-badge">🪙 ${user.coins || 0} Dul Coins</span></div>
+        <button class="auth-btn" style="margin-top:12px;padding:12px;" onclick="adminGenerateCode('${user.uid}')">Generar código +10 Dul Coins</button>
+        <div id="adminGeneratedCode"></div>
+      </div>`;
+  } catch(e) {
+    console.error(e);
+    resultEl.innerHTML = '<div style="color:#c0392b;font-size:13px;padding:8px 0;">Error al buscar usuario.</div>';
+  }
+}
+
+async function adminGenerateCode(userId) {
+  try {
+    const code = await generateCoinCode(userId);
+    document.getElementById('adminGeneratedCode').innerHTML = `
+      <div class="generated-code">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Código generado (válido 48 h)</div>
+        <div class="generated-code-val">${code}</div>
+        <div class="generated-code-hint">Entrégalo al cliente para que lo canjee en su perfil</div>
+      </div>`;
+    showToast('Código generado: ' + code);
+  } catch(e) {
+    console.error(e);
+    showToast('Error al generar código');
+  }
+}
+
+// ══════════════════════════════════════════════
+//  RENDER PROFILE PAGE
+// ══════════════════════════════════════════════
+function renderProfilePage() {
+  const el = document.getElementById('perfilContent');
+  if (!el) return;
+
+  if (!currentUser) {
+    // Not logged in — show auth tabs
+    el.innerHTML = `
+      <div class="profile-card">
+        <div style="text-align:center;margin-bottom:16px;">
+          <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;">Bienvenida</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Inicia sesión o regístrate para acumular Dul Coins</div>
+        </div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Iniciar sesión</button>
+          <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Registrarse</button>
+        </div>
+        <!-- LOGIN FORM -->
+        <div id="form-login">
+          <div class="auth-form">
+            <input type="email" id="loginEmail" class="auth-input" placeholder="Correo electrónico" autocomplete="email">
+            <input type="password" id="loginPassword" class="auth-input" placeholder="Contraseña" autocomplete="current-password">
+            <div class="auth-error" id="loginError"></div>
+            <button class="auth-btn" onclick="handleLogin()">Iniciar sesión</button>
+          </div>
+        </div>
+        <!-- REGISTER FORM -->
+        <div id="form-register" style="display:none;">
+          <div class="auth-form">
+            <input type="text" id="regName" class="auth-input" placeholder="Nombre completo" autocomplete="name">
+            <input type="email" id="regEmail" class="auth-input" placeholder="Correo electrónico" autocomplete="email">
+            <input type="tel" id="regPhone" class="auth-input" placeholder="Teléfono (opcional)" autocomplete="tel">
+            <input type="password" id="regPassword" class="auth-input" placeholder="Contraseña (mín. 6 caracteres)" autocomplete="new-password">
+            <div class="auth-error" id="registerError"></div>
+            <button class="auth-btn" onclick="handleRegister()">Crear cuenta</button>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Logged in
+  const coins = userProfile ? (userProfile.coins || 0) : 0;
+  const name = userProfile ? (userProfile.name || currentUser.email) : currentUser.email;
+  const initials = name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+
+  // Next reward threshold
+  const nextReward = REWARDS.find(r => r.coins > coins) || REWARDS[REWARDS.length-1];
+  const prevThreshold = REWARDS.filter(r => r.coins <= coins).slice(-1)[0];
+  const prevCoins = prevThreshold ? prevThreshold.coins : 0;
+  const progressPct = nextReward.coins > prevCoins
+    ? Math.min(100, Math.round(((coins - prevCoins) / (nextReward.coins - prevCoins)) * 100))
+    : 100;
+
+  const rewardsHtml = REWARDS.map(r => {
+    const canAfford = coins >= r.coins;
+    return `<div class="reward-item">
+      <div class="reward-emoji">${r.emoji}</div>
+      <div class="reward-info">
+        <div class="reward-name">${r.name}</div>
+        <div class="reward-coins">🪙 ${r.coins} Dul Coins</div>
+      </div>
+      <button class="reward-btn" ${canAfford ? '' : 'disabled'} onclick="claimReward('${r.id}')">Canjear</button>
+    </div>`;
+  }).join('');
+
+  const isAdmin = currentUser.email === ADMIN_EMAIL;
+
+  el.innerHTML = `
+    <div class="profile-card">
+      <div class="profile-avatar">${initials}</div>
+      <div class="profile-name">${name}</div>
+      <div class="profile-email">${currentUser.email}</div>
+      <div class="coins-display">
+        <div class="coins-icon">🪙</div>
+        <div>
+          <div class="coins-amount">${coins}</div>
+          <div class="coins-label">Dul Coins</div>
+        </div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>Progreso al siguiente premio</span>
+          <span>${coins}/${nextReward.coins}</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%"></div></div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Próximo: ${nextReward.emoji} ${nextReward.name}</div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:8px;">Canjear código</div>
+    <div class="profile-card" style="padding:14px;">
+      <div class="redeem-section">
+        <input type="text" id="redeemCodeInput" class="redeem-input" placeholder="XXXXXX" maxlength="6">
+        <button class="redeem-btn" onclick="handleRedeem()">Canjear</button>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Ingresa el código que te dio la pastelería para sumar +10 Dul Coins</div>
+    </div>
+
+    <div class="section-label" style="margin-top:8px;">Premios disponibles</div>
+    <div class="profile-card" style="padding:14px;">
+      <div class="rewards-list">${rewardsHtml}</div>
+    </div>
+
+    ${isAdmin ? `<div class="profile-card" style="padding:14px;margin-top:0;">
+      <button class="auth-btn" style="background:var(--accent-deep);" onclick="goTo('admin')">Panel de administración</button>
+    </div>` : ''}
+
+    <div class="profile-card" style="padding:14px;">
+      <button class="logout-btn" onclick="logoutUser()">Cerrar sesión</button>
+    </div>`;
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('form-login').style.display = tab === 'login' ? '' : 'none';
+  document.getElementById('form-register').style.display = tab === 'register' ? '' : 'none';
+}
+
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  errEl.style.display = 'none';
+  try {
+    await loginUser(email, password);
+    showToast('¡Bienvenida de vuelta!');
+    goTo('perfil');
+  } catch(e) {
+    errEl.textContent = e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' ? 'Correo o contraseña incorrectos.' : (e.message || 'Error al iniciar sesión');
+    errEl.style.display = 'block';
+  }
+}
+
+async function handleRegister() {
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const errEl = document.getElementById('registerError');
+  errEl.style.display = 'none';
+  if (!name || !email || !password) { errEl.textContent = 'Completa todos los campos requeridos.'; errEl.style.display = 'block'; return; }
+  if (password.length < 6) { errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.'; errEl.style.display = 'block'; return; }
+  try {
+    await registerUser(name, email, password, phone);
+    showToast('¡Cuenta creada! Bienvenida 🎉');
+    goTo('perfil');
+  } catch(e) {
+    errEl.textContent = e.code === 'auth/email-already-in-use' ? 'Este correo ya está registrado.' : (e.message || 'Error al registrar');
+    errEl.style.display = 'block';
+  }
+}
+
+async function handleRedeem() {
+  const code = document.getElementById('redeemCodeInput').value;
+  await redeemCode(code);
+  const inp = document.getElementById('redeemCodeInput');
+  if (inp) inp.value = '';
+}
 
 </script>
 </body>

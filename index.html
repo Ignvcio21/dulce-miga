@@ -739,6 +739,17 @@ html, body {
       </div>
       <div id="adminUserResult"></div>
     </div>
+
+    <!-- Todas las cuentas -->
+    <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>Todas las cuentas</span>
+      <button onclick="adminLoadAllUsers()" style="background:none;border:none;color:var(--accent);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;">Actualizar ↻</button>
+    </div>
+    <div id="adminAllUsersResult">
+      <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">
+        <button class="auth-btn" style="padding:12px 24px;" onclick="adminLoadAllUsers()">Cargar cuentas</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1436,11 +1447,13 @@ async function adminVerifyRedemption() {
     const userEmail = userData.email || '—';
     const userPhone = userData.phone || '—';
     const docId = snap.docs[0].id;
+    const userCoins = userData.coins || 0;
     const userInfo = `
       <div style="margin:10px 0 8px;padding:10px 12px;background:rgba(0,0,0,.04);border-radius:8px;display:flex;flex-direction:column;gap:4px;">
         <div style="font-size:13px;font-weight:700;color:var(--text-primary);">👤 ${userName}</div>
         <div style="font-size:12px;color:var(--text-secondary);">📧 ${userEmail}</div>
         <div style="font-size:12px;color:var(--text-secondary);">📱 ${userPhone}</div>
+        <div style="font-size:12px;font-weight:700;color:var(--accent-deep);margin-top:2px;"><img src="duls-coin.png" style="width:14px;height:14px;object-fit:contain;vertical-align:middle;margin-right:3px;">${userCoins} Duls Coin</div>
       </div>`;
     if (used) {
       resultEl.innerHTML = `<div style="padding:12px;background:#fdecea;border-radius:10px;margin-top:10px;">
@@ -1459,6 +1472,102 @@ async function adminVerifyRedemption() {
   } catch(e) {
     console.error(e);
     resultEl.innerHTML = '<div style="color:#c0392b;font-size:13px;padding:8px 0;">Error al verificar código.</div>';
+  }
+}
+
+async function adminLoadAllUsers() {
+  const el = document.getElementById('adminAllUsersResult');
+  el.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:12px 0;text-align:center;">Cargando...</div>';
+  try {
+    const [usersSnap, redemptionsSnap, codesSnap] = await Promise.all([
+      db.collection('users').orderBy('createdAt', 'desc').get(),
+      db.collection('redemptions').get(),
+      db.collection('codes').get()
+    ]);
+
+    if (usersSnap.empty) {
+      el.innerHTML = '<div style="color:var(--text-muted);font-size:13px;padding:12px;text-align:center;">No hay cuentas registradas.</div>';
+      return;
+    }
+
+    const redemptionsByUser = {};
+    redemptionsSnap.forEach(doc => {
+      const d = doc.data();
+      if (!redemptionsByUser[d.userId]) redemptionsByUser[d.userId] = [];
+      redemptionsByUser[d.userId].push(d);
+    });
+
+    const codesByUser = {};
+    codesSnap.forEach(doc => {
+      const d = doc.data();
+      if (d.redeemedBy) {
+        if (!codesByUser[d.redeemedBy]) codesByUser[d.redeemedBy] = [];
+        codesByUser[d.redeemedBy].push(d);
+      }
+    });
+
+    const cards = usersSnap.docs.map(doc => {
+      const u = doc.data();
+      const uid = doc.id;
+      const redemptions = redemptionsByUser[uid] || [];
+      const coins = codesByUser[uid] || [];
+      const rewardRows = redemptions.map(r => {
+        const reward = REWARDS.find(rw => rw.id === r.rewardId);
+        const date = r.claimedAt ? new Date(r.claimedAt.seconds * 1000).toLocaleDateString('es-CL') : '—';
+        const status = r.used ? '<span style="color:#27ae60;font-weight:600;">Entregado</span>' : '<span style="color:#e67e22;font-weight:600;">Pendiente</span>';
+        return `<div style="font-size:12px;padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px;">
+          <span>🎁 ${reward ? reward.name : r.rewardId} <span style="color:var(--text-muted);">(${r.redeemCode || '—'})</span></span>
+          <span style="display:flex;gap:8px;align-items:center;white-space:nowrap;">${status} <span style="color:var(--text-muted);">${date}</span></span>
+        </div>`;
+      }).join('');
+
+      const coinRows = coins.map(c => {
+        const date = c.redeemedAt ? new Date(c.redeemedAt.seconds * 1000).toLocaleDateString('es-CL') : '—';
+        return `<div style="font-size:12px;padding:5px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;">
+          <span><img src="duls-coin.png" style="width:12px;height:12px;object-fit:contain;vertical-align:middle;"> +${c.coins || 10} Duls Coin</span>
+          <span style="color:var(--text-muted);">${date}</span>
+        </div>`;
+      }).join('');
+
+      const historySection = (redemptions.length || coins.length) ? `
+        <div id="hist-${uid}" style="display:none;margin-top:10px;border-top:1px solid var(--border);padding-top:10px;">
+          ${coins.length ? `<div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Puntos ganados</div>${coinRows}` : ''}
+          ${redemptions.length ? `<div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin:8px 0 4px;">Canjes de premios</div>${rewardRows}` : ''}
+        </div>
+        <button onclick="var h=document.getElementById('hist-${uid}');var open=h.style.display!='none';h.style.display=open?'none':'block';this.textContent=open?'Ver historial ▾':'Ocultar ▴';"
+          style="background:none;border:none;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;margin-top:8px;padding:0;font-family:'DM Sans',sans-serif;">
+          Ver historial ▾
+        </button>` : '<div style="font-size:12px;color:var(--text-muted);margin-top:6px;">Sin actividad aún.</div>';
+
+      return `<div class="profile-card" style="padding:14px;margin-bottom:10px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+          <div>
+            <div style="font-weight:700;font-size:15px;margin-bottom:2px;">👤 ${u.name || 'Sin nombre'}</div>
+            <div style="font-size:12px;color:var(--text-secondary);">📧 ${u.email || '—'}</div>
+            <div style="font-size:12px;color:var(--text-secondary);">📱 ${u.phone || '—'}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-size:18px;font-weight:800;color:var(--accent-deep);">${u.coins || 0}</div>
+            <div style="font-size:11px;color:var(--text-muted);">Duls Coin</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">${redemptions.length} canje${redemptions.length !== 1 ? 's' : ''}</div>
+          </div>
+        </div>
+        <button onclick="adminGenerateCode('${uid}')" style="
+          width:100%;margin-top:10px;padding:10px;
+          background:var(--surface-2);border:1.5px solid var(--border);
+          border-radius:10px;font-size:13px;font-weight:600;
+          color:var(--accent-deep);font-family:'DM Sans',sans-serif;cursor:pointer;">
+          + Dar 10 Duls Coin
+        </button>
+        <div id="adminGeneratedCode-${uid}"></div>
+        ${historySection}
+      </div>`;
+    }).join('');
+
+    el.innerHTML = cards;
+  } catch(e) {
+    console.error(e);
+    el.innerHTML = '<div style="color:#c0392b;font-size:13px;padding:12px;">Error al cargar usuarios.</div>';
   }
 }
 
@@ -1527,12 +1636,16 @@ async function adminSearchUser() {
 async function adminGenerateCode(userId) {
   try {
     const code = await generateCoinCode(userId);
-    document.getElementById('adminGeneratedCode').innerHTML = `
+    const codeHTML = `
       <div class="generated-code">
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px;">Código generado (válido 48 h)</div>
         <div class="generated-code-val">${code}</div>
         <div class="generated-code-hint">Entrégalo al cliente para que lo canjee en su perfil</div>
       </div>`;
+    const byUid = document.getElementById('adminGeneratedCode-' + userId);
+    const generic = document.getElementById('adminGeneratedCode');
+    if (byUid) byUid.innerHTML = codeHTML;
+    else if (generic) generic.innerHTML = codeHTML;
     showToast('Código generado: ' + code);
   } catch(e) {
     console.error(e);

@@ -7,7 +7,6 @@
 <meta name="theme-color" content="#D4738A">
 <title>Dulce Miga</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 /* ── PRINT STYLES ────────────────────────────── */
 @media print {
@@ -1195,23 +1194,180 @@ function fillPrintOrder() {
     </div>`).join('');
 }
 
+function generateReceiptCanvas() {
+  const W = 640, PAD = 48;
+  const ACCENT = '#D4738A', LIGHT = '#FFF0F3', MUTED = '#9C6B78', FAINT = '#F5D5DC', DARK = '#2D1B1E';
+  const emojis = {pay:'🍰',queque:'🎂',brownie:'🍫',galleta:'🍪',especial:'🍓'};
+  const now = new Date();
+  const fecha = now.toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' + now.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+  const num = Math.floor(Math.random()*900)+100;
+  const subtotal = cartTotal();
+
+  const ITEM_H = 80;
+  const BODY_START = 180;
+  const ITEMS_START = BODY_START + 90;
+  const ITEMS_END = ITEMS_START + cart.length * ITEM_H + 10;
+  const TOTALS_H = 140;
+  const PICKUP_H = 120;
+  const FOOTER_H = 80;
+  const H = ITEMS_END + TOTALS_H + PICKUP_H + FOOTER_H;
+
+  const cv = document.createElement('canvas');
+  cv.width = W * 2; cv.height = H * 2;
+  cv.style.width = W + 'px'; cv.style.height = H + 'px';
+  const ctx = cv.getContext('2d');
+  ctx.scale(2, 2);
+
+  function roundRect(x, y, w, h, r, fill) {
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y); ctx.arcTo(x+w, y, x+w, y+r, r);
+    ctx.lineTo(x+w, y+h-r); ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
+    ctx.lineTo(x+r, y+h); ctx.arcTo(x, y+h, x, y+h-r, r);
+    ctx.lineTo(x, y+r); ctx.arcTo(x, y, x+r, y, r);
+    ctx.closePath();
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  }
+
+  // Background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  // Header
+  ctx.fillStyle = ACCENT;
+  ctx.fillRect(0, 0, W, 170);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 30px Georgia, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Dulce Miga', W/2, 68);
+  ctx.font = '11px DM Sans, sans-serif';
+  ctx.globalAlpha = .7;
+  ctx.fillText('REPOSTERÍA ARTESANAL · TALCA', W/2, 92);
+  ctx.globalAlpha = .3;
+  ctx.fillRect(W/2-24, 105, 48, 1);
+  ctx.globalAlpha = .6;
+  ctx.font = '10px DM Sans, sans-serif';
+  ctx.fillText('COMPROBANTE DE PEDIDO', W/2, 125);
+  ctx.globalAlpha = 1;
+
+  // Meta
+  ctx.textAlign = 'left';
+  ctx.fillStyle = MUTED;
+  ctx.font = '11px DM Sans, sans-serif';
+  ctx.fillText('Pedido #' + num, PAD, BODY_START + 28);
+  ctx.textAlign = 'right';
+  ctx.fillText(fecha, W - PAD, BODY_START + 28);
+
+  // Divider
+  ctx.fillStyle = FAINT;
+  ctx.fillRect(PAD, BODY_START + 44, W - PAD*2, 1);
+
+  // Section label
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#C4A0AA';
+  ctx.font = '600 10px DM Sans, sans-serif';
+  ctx.fillText('PRODUCTOS', PAD, ITEMS_START - 14);
+
+  // Items
+  cart.forEach((item, i) => {
+    const y = ITEMS_START + i * ITEM_H;
+    // icon bg
+    roundRect(PAD, y + 8, 52, 52, 10, LIGHT);
+    // emoji
+    ctx.font = '24px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(emojis[item.product.category]||'🍰', PAD + 26, y + 42);
+    // name
+    ctx.textAlign = 'left';
+    ctx.fillStyle = DARK;
+    ctx.font = '600 13px DM Sans, sans-serif';
+    ctx.fillText(item.product.name, PAD + 64, y + 26);
+    // detail
+    ctx.fillStyle = MUTED;
+    ctx.font = '11px DM Sans, sans-serif';
+    ctx.fillText(item.sizeName + ' · ' + item.qty + (item.qty>1?' unidades':' unidad'), PAD + 64, y + 44);
+    // price
+    ctx.textAlign = 'right';
+    ctx.fillStyle = DARK;
+    ctx.font = '700 14px DM Sans, sans-serif';
+    ctx.fillText('$' + (item.sizePrice*item.qty).toLocaleString('es-CL'), W - PAD, y + 36);
+    // divider
+    if (i < cart.length - 1) {
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = FAINT;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(PAD, y + ITEM_H); ctx.lineTo(W - PAD, y + ITEM_H);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  });
+
+  // Totals
+  const ty = ITEMS_END + 10;
+  ctx.fillStyle = FAINT;
+  ctx.fillRect(PAD, ty, W - PAD*2, 1);
+  ctx.textAlign = 'left';
+  ctx.fillStyle = MUTED;
+  ctx.font = '12px DM Sans, sans-serif';
+  ctx.fillText('Subtotal', PAD, ty + 26);
+  ctx.textAlign = 'right';
+  ctx.fillText('$' + subtotal.toLocaleString('es-CL'), W - PAD, ty + 26);
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#3B9A5A';
+  ctx.fillText('Retiro en punto de entrega', PAD, ty + 48);
+  ctx.textAlign = 'right';
+  ctx.fillText('$0', W - PAD, ty + 48);
+  // Total box
+  roundRect(PAD, ty + 62, W - PAD*2, 46, 12, ACCENT);
+  ctx.fillStyle = '#ffffff';
+  ctx.textAlign = 'left';
+  ctx.font = 'bold 16px Georgia, serif';
+  ctx.fillText('Total', PAD + 18, ty + 92);
+  ctx.textAlign = 'right';
+  ctx.font = '700 22px DM Sans, sans-serif';
+  ctx.fillText('$' + subtotal.toLocaleString('es-CL'), W - PAD - 18, ty + 92);
+
+  // Pickup
+  const py = ty + 126;
+  ctx.fillStyle = FAINT;
+  ctx.fillRect(PAD, py, W - PAD*2, 1);
+  ctx.fillStyle = '#C4A0AA';
+  ctx.textAlign = 'left';
+  ctx.font = '600 10px DM Sans, sans-serif';
+  ctx.fillText('PUNTOS DE RETIRO', PAD, py + 22);
+  [[' Plaza de Armas, Talca','Martes y jueves · 16:00 – 17:00'],[' Univ. Santo Tomás, Talca','Lunes y viernes · 12:00 – 14:00']].forEach(([name, time], i) => {
+    const ry = py + 40 + i * 38;
+    ctx.beginPath(); ctx.arc(PAD + 5, ry - 3, 5, 0, Math.PI*2);
+    ctx.fillStyle = ACCENT; ctx.fill();
+    ctx.fillStyle = DARK; ctx.font = '600 12px DM Sans, sans-serif';
+    ctx.fillText(name, PAD + 18, ry);
+    ctx.fillStyle = MUTED; ctx.font = '11px DM Sans, sans-serif';
+    ctx.fillText(time, PAD + 18, ry + 16);
+  });
+
+  // Note
+  const ny = py + 120;
+  roundRect(PAD, ny, W - PAD*2, 36, 10, LIGHT);
+  ctx.fillStyle = MUTED; ctx.textAlign = 'center';
+  ctx.font = '11px DM Sans, sans-serif';
+  ctx.fillText('Pedidos con 48 h de anticipación  ·  +56 9 8444-0866', W/2, ny + 22);
+
+  // Footer
+  ctx.fillStyle = '#C4A0AA';
+  ctx.font = 'italic 13px Georgia, serif';
+  ctx.fillText('Hecho con amor ♡', W/2, ny + 64);
+
+  return cv;
+}
+
 async function shareOrderWhatsApp() {
   if (cart.length === 0) return;
   const btn = document.getElementById('checkoutBtn');
-  btn.textContent = 'Generando comprobante...';
+  btn.textContent = 'Generando...';
   btn.disabled = true;
-  fillPrintOrder();
-  const el = document.getElementById('print-order');
-  el.style.display = 'block';
-  el.style.position = 'fixed';
-  el.style.left = '-9999px';
-  el.style.top = '0';
-  el.style.width = '480px';
   try {
-    const canvas = await html2canvas(el, {scale:2, useCORS:true, backgroundColor:'#ffffff'});
-    el.style.display = 'none';
-    el.style.position = '';
-    el.style.left = '';
+    const canvas = generateReceiptCanvas();
     canvas.toBlob(async blob => {
       const file = new File([blob], 'pedido-dulce-miga.png', {type:'image/png'});
       if (navigator.canShare && navigator.canShare({files:[file]})) {
@@ -1219,9 +1375,7 @@ async function shareOrderWhatsApp() {
           await navigator.share({files:[file], title:'Pedido Dulce Miga'});
           cart = []; updateCartBadges(); renderCart();
           showToast('Comprobante enviado');
-        } catch(e) {
-          fallbackWhatsApp();
-        }
+        } catch(e) { fallbackWhatsApp(); }
       } else {
         fallbackWhatsApp();
       }
@@ -1229,9 +1383,8 @@ async function shareOrderWhatsApp() {
       btn.disabled = false;
     }, 'image/png');
   } catch(e) {
-    el.style.display = 'none';
     fallbackWhatsApp();
-    btn.innerHTML = 'Enviar pedido por WhatsApp';
+    btn.textContent = 'Enviar pedido por WhatsApp';
     btn.disabled = false;
   }
 }

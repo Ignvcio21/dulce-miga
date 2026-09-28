@@ -870,8 +870,11 @@ const products = [
 // ══════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════
-let favorites = new Set();
-let cart = [];
+let favorites = new Set(JSON.parse(localStorage.getItem('dm_favorites') || '[]'));
+let cart = JSON.parse(localStorage.getItem('dm_cart') || '[]');
+
+function saveCart() { try { localStorage.setItem('dm_cart', JSON.stringify(cart)); } catch(e){} }
+function saveFavorites() { try { localStorage.setItem('dm_favorites', JSON.stringify([...favorites])); } catch(e){} }
 let currentProduct = null;
 let selectedSizeIdx = 0;
 let currentPage = 'inicio';
@@ -953,6 +956,7 @@ function toggleFav(e, id) {
   e.stopPropagation();
   if (favorites.has(id)) { favorites.delete(id); showToast('Eliminado de favoritos'); }
   else { favorites.add(id); showToast('Guardado en favoritos'); }
+  saveFavorites();
   updateFavIcon();
   document.querySelectorAll(`[id^="fav-"][id$="-${id}"]`).forEach(btn => {
     const active = favorites.has(id);
@@ -1033,19 +1037,19 @@ function addToCart(product, sizeIdx) {
   const size = product.sizes[sizeIdx];
   const existing = cart.find(i => i.product.id === product.id && i.sizeName === size.name);
   if (existing) { existing.qty++; } else { cart.push({ product, sizeName: size.name, sizePrice: size.price, qty: 1 }); }
-  updateCartBadges();
+  updateCartBadges(); saveCart();
 }
 
 function changeQty(idx, delta) {
   cart[idx].qty += delta;
   if (cart[idx].qty <= 0) cart.splice(idx, 1);
-  updateCartBadges();
+  updateCartBadges(); saveCart();
   renderCart();
 }
 
 function clearCart() {
   if (cart.length === 0) return;
-  cart = []; updateCartBadges(); renderCart(); showToast('Carrito vaciado');
+  cart = []; updateCartBadges(); saveCart(); renderCart(); showToast('Carrito vaciado');
 }
 
 function renderCart() {
@@ -1132,7 +1136,7 @@ function sendWhatsApp() {
   }
   msg += `¿Cuál es la disponibilidad? 😊`;
   window.open('https://wa.me/56984440866?text=' + encodeURIComponent(msg), '_blank');
-  closeModal(); cart = []; updateCartBadges(); renderCart();
+  closeModal(); cart = []; updateCartBadges(); saveCart(); renderCart();
   showToast('Pedido enviado por WhatsApp');
 }
 

@@ -147,6 +147,8 @@ html, body {
 .product-img-wrap { width: 100%; aspect-ratio: 1/1; position: relative; overflow: hidden; }
 .product-card.featured .product-img-wrap { aspect-ratio: 16/8; }
 .product-canvas { width: 100%; height: 100%; display: block; }
+.product-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
+.product-card:hover .product-img { transform: scale(1.04); }
 .product-badge {
   position: absolute; top: 10px; left: 10px;
   background: var(--accent); color: #fff;
@@ -281,7 +283,7 @@ html, body {
 .bottom-sheet.open { transform: translateY(0); }
 .sheet-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 0; }
 .sheet-img-wrap { width: 100%; aspect-ratio: 4/3; position: relative; overflow: hidden; }
-.sheet-canvas { width: 100%; height: 100%; display: block; }
+.sheet-canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
 .sheet-content { padding: 20px 22px 0; }
 .sheet-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
 .sheet-name { font-family: 'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
@@ -525,7 +527,7 @@ html, body {
 <div class="bottom-sheet" id="bottomSheet">
   <div class="sheet-handle"></div>
   <div class="sheet-img-wrap">
-    <canvas class="sheet-canvas" id="sheetCanvas"></canvas>
+    <img class="sheet-canvas" id="sheetCanvas" src="" alt="">
   </div>
   <div class="sheet-content" id="sheetContent"></div>
   <div class="sheet-footer">
@@ -617,42 +619,42 @@ const products = [
     description:'Cremoso pay de queso Philadelphia con base de galleta mantequilla, coronado con compota artesanal de frutos rojos frescos. Textura sedosa y sabor equilibrado entre dulce y ácido.',
     ingredients:['Queso crema','Galleta','Mantequilla','Frutos rojos','Azúcar','Vainilla','Huevo'], allergens:['Lácteos','Gluten','Huevo'],
     sizes:[{name:'Personal',price:8500},{name:'Familiar',price:14500},{name:'Grande',price:18500}],
-    palette:['#FBEAF0','#D4738A','#F4C0D1'], emoji:'🍰' },
+    image:'images/pay-queso.webp' },
   { id:2, name:'Pay de Limón', category:'pay', categoryLabel:'Pay', price:7500, badge:null, featured:false,
     description:'Irresistible pay de limón con merengue italiano tostado. Base crujiente de galleta, relleno de crema de limón ácido y cobertura de merengue perfectamente dorado.',
     ingredients:['Limón','Huevo','Azúcar','Mantequilla','Galleta','Leche condensada'], allergens:['Lácteos','Huevo','Gluten'],
     sizes:[{name:'Personal',price:7500},{name:'Familiar',price:13000},{name:'Grande',price:17000}],
-    palette:['#FFFCE0','#F0C040','#FFF6C0'], emoji:'🍋' },
+    image:'images/pay-limon.webp' },
   { id:3, name:'Queque de Zanahoria', category:'queque', categoryLabel:'Queque', price:6000, badge:'Nuevo', featured:false,
     description:'Húmedo queque de zanahoria con nueces pecanas y especias cálidas de canela y nuez moscada. Cubierto con frosting de queso crema artesanal.',
     ingredients:['Zanahoria','Harina','Huevo','Azúcar morena','Canela','Nuez moscada','Pecanas','Queso crema'], allergens:['Gluten','Huevo','Lácteos','Frutos secos'],
     sizes:[{name:'Pequeño',price:6000},{name:'Mediano',price:10500},{name:'Grande',price:14000}],
-    palette:['#FFE8CC','#E07820','#FFD0A0'], emoji:'🥕' },
+    image:'images/queque-zanahoria.webp' },
   { id:4, name:'Queque de Vainilla y Buttercream', category:'queque', categoryLabel:'Queque', price:9500, badge:null, featured:false,
     description:'Suave queque de vainilla bourbon con capas de buttercream de mantequilla y rosas de fondant. Perfecto para celebraciones. Decoración personalizable.',
     ingredients:['Harina','Mantequilla','Azúcar','Vainilla bourbon','Huevo','Leche','Crema de leche','Fondant'], allergens:['Gluten','Lácteos','Huevo'],
     sizes:[{name:'Pequeño',price:9500},{name:'Mediano',price:16500},{name:'Grande',price:22000}],
-    palette:['#F5E8FF','#B06ED0','#EDD5FF'], emoji:'🎂' },
+    image:'images/queque-vainilla.webp' },
   { id:5, name:'Brownies de Chocolate', category:'brownie', categoryLabel:'Brownie', price:4000, badge:null, featured:false,
     description:'Intensos brownies de chocolate oscuro belga con costra crujiente y centro fudgy irresistible. Opcionales con chispas de chocolate blanco o nueces.',
     ingredients:['Chocolate 70%','Mantequilla','Azúcar','Huevo','Harina','Cacao','Vainilla'], allergens:['Gluten','Lácteos','Huevo'],
     sizes:[{name:'4 unidades',price:4000},{name:'8 unidades',price:7500},{name:'12 unidades',price:10500}],
-    palette:['#3D1C0A','#7A3E1E','#5A2810'], emoji:'🍫' },
+    image:'images/brownies.webp' },
   { id:6, name:'Galletas de Mantequilla', category:'galleta', categoryLabel:'Galleta', price:3500, badge:null, featured:false,
     description:'Delicadas galletas de mantequilla europea al estilo danés, con glaseado real pintado a mano. Cada pieza es única. Ideales como regalo o detalle especial.',
     ingredients:['Mantequilla europea','Harina','Azúcar glass','Huevo','Vainilla','Glaseado real'], allergens:['Gluten','Lácteos','Huevo'],
     sizes:[{name:'6 unidades',price:3500},{name:'12 unidades',price:6500},{name:'24 unidades',price:12000}],
-    palette:['#FFF3CC','#E8C060','#FFE890'], emoji:'🍪' },
+    image:'images/galletas.webp' },
   { id:7, name:'Tartaleta de Fresa', category:'especial', categoryLabel:'Especial', price:5500, badge:'Especial', featured:false,
     description:'Elegante tartaleta de masa sablée rellena de crema pastelera y fresas frescas laminadas. Un clásico de la repostería francesa en presentación individual.',
     ingredients:['Harina','Mantequilla','Azúcar','Huevo','Leche','Maicena','Vainilla','Fresas frescas'], allergens:['Gluten','Lácteos','Huevo'],
     sizes:[{name:'Individual',price:5500},{name:'6 unidades',price:28000},{name:'12 unidades',price:54000}],
-    palette:['#FFE8EE','#E84060','#FFC0CC'], emoji:'🍓' },
+    image:'images/tartaleta-fresa.webp' },
   { id:8, name:'Cinnamon Roll Artesanal', category:'especial', categoryLabel:'Especial', price:3000, badge:'Especial', featured:false,
     description:'Esponjoso cinnamon roll horneado al momento, bañado en frosting de queso crema. Masa brioche suave con relleno generoso de canela y azúcar morena.',
     ingredients:['Harina','Leche','Mantequilla','Huevo','Levadura','Azúcar morena','Canela','Queso crema'], allergens:['Gluten','Lácteos','Huevo'],
     sizes:[{name:'1 unidad',price:3000},{name:'4 unidades',price:11000},{name:'8 unidades',price:21000}],
-    palette:['#FFF0D8','#C07020','#FFD8A0'], emoji:'🌀' },
+    image:'images/cinnamon-roll.webp' },
 ];
 
 // ══════════════════════════════════════════════
@@ -665,29 +667,8 @@ let selectedSizeIdx = 0;
 let currentPage = 'inicio';
 
 // ══════════════════════════════════════════════
-//  CANVAS ILLUSTRATION
+//  (canvas removed — using real product images)
 // ══════════════════════════════════════════════
-function drawCanvas(canvas, product, w, h) {
-  if (!canvas) return;
-  canvas.width = w * 2; canvas.height = h * 2;
-  canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-  const ctx = canvas.getContext('2d');
-  ctx.scale(2, 2);
-  const [c1, c2, c3] = product.palette;
-  const g = ctx.createLinearGradient(0, 0, w, h);
-  g.addColorStop(0, c3); g.addColorStop(1, c1);
-  ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
-  ctx.globalAlpha = .2; ctx.fillStyle = c2;
-  ctx.beginPath(); ctx.arc(w*.85, h*.2, h*.45, 0, Math.PI*2); ctx.fill();
-  ctx.globalAlpha = .12;
-  ctx.beginPath(); ctx.arc(w*.15, h*.82, h*.35, 0, Math.PI*2); ctx.fill();
-  ctx.globalAlpha = 1;
-  ctx.font = `${Math.min(w,h)*.38}px serif`;
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.shadowColor = 'rgba(0,0,0,.15)'; ctx.shadowBlur = 10;
-  ctx.fillText(product.emoji, w/2, h/2);
-  ctx.shadowBlur = 0;
-}
 
 // ══════════════════════════════════════════════
 //  NAVIGATION
@@ -719,7 +700,7 @@ function renderGrid(containerId, filter, countId, showFeatured) {
     card.className = 'product-card' + (isFeat ? ' featured' : '');
     card.innerHTML = `
       <div class="product-img-wrap">
-        <canvas class="product-canvas" id="c-${containerId}-${p.id}"></canvas>
+        <img class="product-img" src="${p.image}" alt="${p.name}" loading="lazy">
         ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
         <button class="product-fav ${isFav ? 'active' : ''}" id="fav-${containerId}-${p.id}"
           onclick="toggleFav(event,${p.id})" aria-label="Favorito">
@@ -738,12 +719,6 @@ function renderGrid(containerId, filter, countId, showFeatured) {
       </div>`;
     card.addEventListener('click', () => openSheet(p));
     grid.appendChild(card);
-    requestAnimationFrame(() => {
-      const canvas = document.getElementById(`c-${containerId}-${p.id}`);
-      if (!canvas) return;
-      const rect = canvas.parentElement.getBoundingClientRect();
-      drawCanvas(canvas, p, rect.width || 160, rect.height || 160);
-    });
   });
 }
 
@@ -792,7 +767,7 @@ function renderFavorites() {
     card.className = 'product-card';
     card.innerHTML = `
       <div class="product-img-wrap">
-        <canvas class="product-canvas" id="fc-${p.id}"></canvas>
+        <img class="product-img" src="${p.image}" alt="${p.name}" loading="lazy">
         <button class="product-fav active" id="fav-fav-${p.id}" onclick="toggleFav(event,${p.id})" aria-label="Quitar de favoritos">
           ${SVG.heartFill}
         </button>
@@ -807,12 +782,6 @@ function renderFavorites() {
       </div>`;
     card.addEventListener('click', () => openSheet(p));
     grid.appendChild(card);
-    requestAnimationFrame(() => {
-      const canvas = document.getElementById(`fc-${p.id}`);
-      if (!canvas) return;
-      const rect = canvas.parentElement.getBoundingClientRect();
-      drawCanvas(canvas, p, rect.width || 160, rect.height || 160);
-    });
   });
   const pb = document.createElement('div');
   pb.style.paddingBottom = '100px';
@@ -871,7 +840,7 @@ function renderCart() {
   cart.forEach((item, idx) => {
     html += `
       <div class="cart-item">
-        <canvas class="cart-item-canvas" id="cartc-${idx}" width="144" height="144"></canvas>
+        <img class="cart-item-canvas" src="${item.product.image}" alt="${item.product.name}" style="object-fit:cover;border-radius:12px;flex-shrink:0;">
         <div class="cart-item-info">
           <div class="cart-item-cat">${item.product.categoryLabel}</div>
           <div class="cart-item-name">${item.product.name}</div>
@@ -902,13 +871,6 @@ function renderCart() {
     <p class="whatsapp-note">Te contactaremos por WhatsApp para coordinar entrega y pago</p>
   </div>`;
   el.innerHTML = html;
-  cart.forEach((item, idx) => {
-    requestAnimationFrame(() => {
-      const canvas = document.getElementById(`cartc-${idx}`);
-      if (!canvas) return;
-      drawCanvas(canvas, item.product, 72, 72);
-    });
-  });
 }
 
 // ══════════════════════════════════════════════
@@ -940,11 +902,9 @@ function sendWhatsApp() {
 // ══════════════════════════════════════════════
 function openSheet(product) {
   currentProduct = product; selectedSizeIdx = 0;
-  const sheetCanvas = document.getElementById('sheetCanvas');
-  const w = window.innerWidth;
-  const h = Math.round(w * .75);
-  sheetCanvas.parentElement.style.height = h + 'px';
-  drawCanvas(sheetCanvas, product, w, h);
+  const sheetImg = document.getElementById('sheetCanvas');
+  sheetImg.src = product.image;
+  sheetImg.alt = product.name;
   document.getElementById('sheetPriceValue').innerHTML = `<sup>₡</sup>${product.sizes[0].price.toLocaleString('es-CR')}`;
   document.getElementById('sheetContent').innerHTML = `
     <div class="sheet-eyebrow">${product.categoryLabel}</div>
@@ -1033,12 +993,6 @@ renderGrid('homeGrid', 'all', 'homeCount', true);
 renderGrid('catalogGrid', 'all', 'catalogCount', false);
 updateCartBadges();
 
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    renderGrid('homeGrid', 'all', 'homeCount', true);
-    renderGrid('catalogGrid', 'all', 'catalogCount', false);
-  }, 60);
-});
 </script>
 </body>
 </html>

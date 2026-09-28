@@ -1321,10 +1321,7 @@ async function handleForgotPassword() {
   if (!email) { msgEl.textContent = 'Ingresa tu correo primero.'; msgEl.style.color = '#c0392b'; return; }
   msgEl.textContent = 'Enviando...'; msgEl.style.color = 'var(--text-muted)';
   try {
-    await auth.sendPasswordResetEmail(email, {
-      url: 'https://dulce-miga.vercel.app',
-      handleCodeInApp: false
-    });
+    await auth.sendPasswordResetEmail(email);
     msgEl.innerHTML = '✅ Revisa tu bandeja de entrada.<br><span style="color:var(--text-muted)">Si no lo ves, busca en spam.</span>';
     msgEl.style.color = 'var(--accent-deep)';
   } catch(e) {

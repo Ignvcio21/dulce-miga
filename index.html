@@ -892,7 +892,7 @@ function sendWhatsApp() {
   let msg = '¡Hola! Me gustaría hacer el siguiente pedido en Dulce Miga:\n\n';
   msg += cart.map(i => `• ${i.product.name} (${i.sizeName}) x${i.qty} — ₡${(i.sizePrice*i.qty).toLocaleString('es-CR')}`).join('\n');
   msg += `\n\n*Total: ₡${cartTotal().toLocaleString('es-CR')}*\n\n¿Cuál es la disponibilidad?`;
-  window.open('https://wa.me/50684440866?text=' + encodeURIComponent(msg), '_blank');
+  window.open('https://wa.me/56984440866?text=' + encodeURIComponent(msg), '_blank');
   closeModal(); cart = []; updateCartBadges(); renderCart();
   showToast('Pedido enviado por WhatsApp');
 }

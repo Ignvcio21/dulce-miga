@@ -1310,6 +1310,18 @@ async function registerUser(name, email, password, phone) {
   userProfile = { name, email, phone, coins: 0 };
 }
 
+async function handleForgotPassword() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const msgEl = document.getElementById('forgotMsg');
+  if (!email) { msgEl.textContent = 'Ingresa tu correo primero.'; return; }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    msgEl.textContent = '✅ Te enviamos un correo para restablecer tu contraseña.';
+  } catch(e) {
+    msgEl.textContent = 'No encontramos una cuenta con ese correo.';
+  }
+}
+
 async function loginUser(email, password) {
   await auth.signInWithEmailAndPassword(email, password);
 }
@@ -1523,6 +1535,8 @@ function renderProfilePage() {
             <input type="password" id="loginPassword" class="auth-input" placeholder="Contraseña" autocomplete="current-password">
             <div class="auth-error" id="loginError"></div>
             <button class="auth-btn" onclick="handleLogin()">Iniciar sesión</button>
+            <button type="button" onclick="handleForgotPassword()" style="background:none;border:none;color:var(--accent);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;margin-top:4px;padding:4px 0;width:100%;text-align:center;">¿Olvidaste tu contraseña?</button>
+            <div class="auth-error" id="forgotMsg" style="color:var(--accent-deep);"></div>
           </div>
         </div>
         <!-- REGISTER FORM -->

@@ -444,7 +444,7 @@ html, body {
 .profile-name { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 4px; }
 .profile-email { font-size: 13px; color: var(--text-secondary); text-align: center; margin-bottom: 16px; }
 .coins-display { display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
-.coins-icon { font-size: 24px; }
+.coins-icon { font-size: 24px; color: #fff; display: flex; align-items: center; }
 .coins-amount { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
 .coins-label { font-size: 12px; color: rgba(255,255,255,.8); font-weight: 500; }
 .progress-wrap { margin-bottom: 16px; }
@@ -1128,7 +1128,7 @@ function sendWhatsApp() {
   msg += `💰 *Total: $${cartTotal().toLocaleString('es-CL')}*\n`;
   msg += `━━━━━━━━━━━━━━━━━\n\n`;
   if (currentUser && userProfile && cartTotal() >= 8000) {
-    msg += `🪙 Recibirás +10 Dul Coins al confirmar entrega\n\n`;
+    msg += `🪙 Recibirás +10 Duls Coin al confirmar entrega\n\n`;
   }
   msg += `¿Cuál es la disponibilidad? 😊`;
   window.open('https://wa.me/56984440866?text=' + encodeURIComponent(msg), '_blank');
@@ -1321,7 +1321,7 @@ async function redeemCode(code) {
     const newCoins = (userProfile ? (userProfile.coins || 0) : 0) + 10;
     await db.collection('users').doc(currentUser.uid).update({ coins: newCoins });
     if (userProfile) userProfile.coins = newCoins;
-    showToast('¡+10 Dul Coins añadidos!');
+    showToast('¡+10 Duls Coin añadidos!');
     renderProfilePage();
   } catch(e) {
     console.error(e);
@@ -1333,7 +1333,7 @@ async function claimReward(rewardId) {
   if (!currentUser || !userProfile) return;
   const reward = REWARDS.find(r => r.id === rewardId);
   if (!reward) return;
-  if ((userProfile.coins || 0) < reward.coins) { showToast('No tienes suficientes Dul Coins'); return; }
+  if ((userProfile.coins || 0) < reward.coins) { showToast('No tienes suficientes Duls Coin'); return; }
   try {
     const newCoins = userProfile.coins - reward.coins;
     await db.collection('users').doc(currentUser.uid).update({ coins: newCoins });
@@ -1400,8 +1400,8 @@ async function adminSearchUser() {
         <div class="admin-user-name">${user.name || '—'}</div>
         <div class="admin-user-detail">📧 ${user.email}</div>
         <div class="admin-user-detail">📱 ${user.phone || '—'}</div>
-        <div><span class="admin-coins-badge">🪙 ${user.coins || 0} Dul Coins</span></div>
-        <button class="auth-btn" style="margin-top:12px;padding:12px;" onclick="adminGenerateCode('${user.uid}')">Generar código +10 Dul Coins</button>
+        <div><span class="admin-coins-badge">🪙 ${user.coins || 0} Duls Coin</span></div>
+        <button class="auth-btn" style="margin-top:12px;padding:12px;" onclick="adminGenerateCode('${user.uid}')">Generar código +10 Duls Coin</button>
         <div id="adminGeneratedCode"></div>
       </div>`;
   } catch(e) {
@@ -1439,7 +1439,7 @@ function renderProfilePage() {
       <div class="profile-card">
         <div style="text-align:center;margin-bottom:16px;">
           <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;">Bienvenida</div>
-          <div style="font-size:13px;color:var(--text-secondary);">Inicia sesión o regístrate para acumular Dul Coins</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Inicia sesión o regístrate para acumular Duls Coin</div>
         </div>
         <div class="auth-tabs">
           <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Iniciar sesión</button>
@@ -1488,7 +1488,7 @@ function renderProfilePage() {
       <div class="reward-emoji">${r.emoji}</div>
       <div class="reward-info">
         <div class="reward-name">${r.name}</div>
-        <div class="reward-coins">🪙 ${r.coins} Dul Coins</div>
+        <div class="reward-coins">🪙 ${r.coins} Duls Coin</div>
       </div>
       <button class="reward-btn" ${canAfford ? '' : 'disabled'} onclick="claimReward('${r.id}')">Canjear</button>
     </div>`;
@@ -1502,10 +1502,16 @@ function renderProfilePage() {
       <div class="profile-name">${name}</div>
       <div class="profile-email">${currentUser.email}</div>
       <div class="coins-display">
-        <div class="coins-icon">🪙</div>
+        <div class="coins-icon">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="18" cy="18" r="16" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="18" cy="18" r="11" stroke="currentColor" stroke-width="1.4"/>
+            <text x="18" y="23" text-anchor="middle" font-size="11" font-family="inherit" font-weight="600" fill="currentColor">D</text>
+          </svg>
+        </div>
         <div>
           <div class="coins-amount">${coins}</div>
-          <div class="coins-label">Dul Coins</div>
+          <div class="coins-label">Duls Coin</div>
         </div>
       </div>
       <div class="progress-wrap">
@@ -1524,7 +1530,7 @@ function renderProfilePage() {
         <input type="text" id="redeemCodeInput" class="redeem-input" placeholder="XXXXXX" maxlength="6">
         <button class="redeem-btn" onclick="handleRedeem()">Canjear</button>
       </div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Ingresa el código que te dio la pastelería para sumar +10 Dul Coins</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Ingresa el código que te dio la pastelería para sumar +10 Duls Coin</div>
     </div>
 
     <div class="section-label" style="margin-top:8px;">Premios disponibles</div>

@@ -533,7 +533,7 @@ html, body {
   <div class="sheet-footer">
     <div class="sheet-price-big">
       <div class="sheet-price-label">Precio</div>
-      <div class="sheet-price-value" id="sheetPriceValue"><sup>₡</sup>0</div>
+      <div class="sheet-price-value" id="sheetPriceValue"><sup>$</sup>0</div>
     </div>
     <button class="sheet-add-btn" id="sheetAddBtn">Agregar al carrito</button>
   </div>
@@ -711,7 +711,7 @@ function renderGrid(containerId, filter, countId, showFeatured) {
         <div class="product-category">${p.categoryLabel}</div>
         <div class="product-name">${p.name}</div>
         <div class="product-price-row">
-          <div class="product-price"><sup>₡</sup>${p.price.toLocaleString('es-CR')}</div>
+          <div class="product-price"><sup>$</sup>${p.price.toLocaleString('es-CR')}</div>
           <button class="add-btn" onclick="quickAdd(event,${p.id})" aria-label="Agregar">
             ${SVG.plus}
           </button>
@@ -776,7 +776,7 @@ function renderFavorites() {
         <div class="product-category">${p.categoryLabel}</div>
         <div class="product-name">${p.name}</div>
         <div class="product-price-row">
-          <div class="product-price"><sup>₡</sup>${p.price.toLocaleString('es-CR')}</div>
+          <div class="product-price"><sup>$</sup>${p.price.toLocaleString('es-CR')}</div>
           <button class="add-btn" onclick="quickAdd(event,${p.id})" aria-label="Agregar">${SVG.plus}</button>
         </div>
       </div>`;
@@ -846,7 +846,7 @@ function renderCart() {
           <div class="cart-item-name">${item.product.name}</div>
           <div class="cart-item-size">${item.sizeName}</div>
           <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div class="cart-item-price"><sup>₡</sup>${(item.sizePrice*item.qty).toLocaleString('es-CR')}</div>
+            <div class="cart-item-price"><sup>$</sup>${(item.sizePrice*item.qty).toLocaleString('es-CR')}</div>
             <div class="qty-controls">
               <button class="qty-btn minus" onclick="changeQty(${idx},-1)" aria-label="Disminuir">${SVG.minus}</button>
               <span class="qty-num">${item.qty}</span>
@@ -859,11 +859,11 @@ function renderCart() {
   });
   html += `</div>
   <div class="cart-summary">
-    <div class="summary-row"><span>Subtotal</span><span>₡${subtotal.toLocaleString('es-CR')}</span></div>
+    <div class="summary-row"><span>Subtotal</span><span>$${subtotal.toLocaleString('es-CR')}</span></div>
     <div class="summary-row"><span>Envío</span><span style="color:#3B9A5A;font-weight:600;">Coordinar</span></div>
     <div class="summary-row total">
       <span>Total</span>
-      <span class="summary-total-price">₡${subtotal.toLocaleString('es-CR')}</span>
+      <span class="summary-total-price">$${subtotal.toLocaleString('es-CR')}</span>
     </div>
     <button class="checkout-btn" onclick="openCheckout()">
       ${SVG.check} Confirmar pedido
@@ -878,8 +878,8 @@ function renderCart() {
 // ══════════════════════════════════════════════
 function openCheckout() {
   if (cart.length === 0) return;
-  let orderText = cart.map(i => `• ${i.product.name} (${i.sizeName}) x${i.qty} — ₡${(i.sizePrice*i.qty).toLocaleString('es-CR')}`).join('\n');
-  orderText += `\n\nTotal: ₡${cartTotal().toLocaleString('es-CR')}`;
+  let orderText = cart.map(i => `• ${i.product.name} (${i.sizeName}) x${i.qty} — $${(i.sizePrice*i.qty).toLocaleString('es-CR')}`).join('\n');
+  orderText += `\n\nTotal: $${cartTotal().toLocaleString('es-CR')}`;
   document.getElementById('modalOrderBox').textContent = orderText;
   document.getElementById('modalBackdrop').classList.add('open');
   document.getElementById('checkoutModal').classList.add('open');
@@ -890,8 +890,8 @@ function closeModal() {
 }
 function sendWhatsApp() {
   let msg = '¡Hola! Me gustaría hacer el siguiente pedido en Dulce Miga:\n\n';
-  msg += cart.map(i => `• ${i.product.name} (${i.sizeName}) x${i.qty} — ₡${(i.sizePrice*i.qty).toLocaleString('es-CR')}`).join('\n');
-  msg += `\n\n*Total: ₡${cartTotal().toLocaleString('es-CR')}*\n\n¿Cuál es la disponibilidad?`;
+  msg += cart.map(i => `• ${i.product.name} (${i.sizeName}) x${i.qty} — $${(i.sizePrice*i.qty).toLocaleString('es-CR')}`).join('\n');
+  msg += `\n\n*Total: $${cartTotal().toLocaleString('es-CR')}*\n\n¿Cuál es la disponibilidad?`;
   window.open('https://wa.me/56984440866?text=' + encodeURIComponent(msg), '_blank');
   closeModal(); cart = []; updateCartBadges(); renderCart();
   showToast('Pedido enviado por WhatsApp');
@@ -905,7 +905,7 @@ function openSheet(product) {
   const sheetImg = document.getElementById('sheetCanvas');
   sheetImg.src = product.image;
   sheetImg.alt = product.name;
-  document.getElementById('sheetPriceValue').innerHTML = `<sup>₡</sup>${product.sizes[0].price.toLocaleString('es-CR')}`;
+  document.getElementById('sheetPriceValue').innerHTML = `<sup>$</sup>${product.sizes[0].price.toLocaleString('es-CR')}`;
   document.getElementById('sheetContent').innerHTML = `
     <div class="sheet-eyebrow">${product.categoryLabel}</div>
     <div class="sheet-name">${product.name}</div>
@@ -917,7 +917,7 @@ function openSheet(product) {
         ${product.sizes.map((s,i) => `
           <div class="size-opt ${i===0?'selected':''}" onclick="selectSize(${i})" id="sopt-${i}">
             <div class="size-opt-name">${s.name}</div>
-            <div class="size-opt-price">₡${s.price.toLocaleString('es-CR')}</div>
+            <div class="size-opt-price">$${s.price.toLocaleString('es-CR')}</div>
           </div>`).join('')}
       </div>
     </div>
@@ -946,7 +946,7 @@ function closeSheet() {
 function selectSize(idx) {
   selectedSizeIdx = idx;
   document.querySelectorAll('.size-opt').forEach((el,i) => el.classList.toggle('selected', i===idx));
-  document.getElementById('sheetPriceValue').innerHTML = `<sup>₡</sup>${currentProduct.sizes[idx].price.toLocaleString('es-CR')}`;
+  document.getElementById('sheetPriceValue').innerHTML = `<sup>$</sup>${currentProduct.sizes[idx].price.toLocaleString('es-CR')}`;
 }
 
 // ══════════════════════════════════════════════

@@ -955,8 +955,10 @@ function renderCart() {
 // ══════════════════════════════════════════════
 function openCheckout() {
   if (cart.length === 0) return;
-  let orderText = cart.map(i => `• ${i.product.name} (${i.sizeName}) x${i.qty} — $${(i.sizePrice*i.qty).toLocaleString('es-CR')}`).join('\n');
-  orderText += `\n\nTotal: $${cartTotal().toLocaleString('es-CR')}`;
+  let orderText = cart.map(i =>
+    `▸ ${i.product.name}\n   ${i.sizeName} · x${i.qty}  →  $${(i.sizePrice*i.qty).toLocaleString('es-CL')}`
+  ).join('\n\n');
+  orderText += `\n\n──────────────────\nTotal: $${cartTotal().toLocaleString('es-CL')}`;
   document.getElementById('modalOrderBox').textContent = orderText;
   document.getElementById('modalBackdrop').classList.add('open');
   document.getElementById('checkoutModal').classList.add('open');
@@ -966,9 +968,16 @@ function closeModal() {
   document.getElementById('checkoutModal').classList.remove('open');
 }
 function sendWhatsApp() {
-  let msg = '¡Hola! Me gustaría hacer el siguiente pedido en Dulce Miga:\n\n';
-  msg += cart.map(i => `• ${i.product.name} (${i.sizeName}) x${i.qty} — $${(i.sizePrice*i.qty).toLocaleString('es-CR')}`).join('\n');
-  msg += `\n\n*Total: $${cartTotal().toLocaleString('es-CR')}*\n\n¿Cuál es la disponibilidad?`;
+  let msg = '🛍️ *NUEVO PEDIDO — Dulce Miga*\n\n';
+  msg += '¡Hola! Me gustaría hacer el siguiente pedido:\n\n';
+  msg += cart.map(i =>
+    `▸ *${i.product.name}*\n` +
+    `   ${i.sizeName} · x${i.qty}  →  $${(i.sizePrice*i.qty).toLocaleString('es-CL')}`
+  ).join('\n\n');
+  msg += `\n\n━━━━━━━━━━━━━━━━━\n`;
+  msg += `💰 *Total: $${cartTotal().toLocaleString('es-CL')}*\n`;
+  msg += `━━━━━━━━━━━━━━━━━\n\n`;
+  msg += `¿Cuál es la disponibilidad? 😊`;
   window.open('https://wa.me/56984440866?text=' + encodeURIComponent(msg), '_blank');
   closeModal(); cart = []; updateCartBadges(); renderCart();
   showToast('Pedido enviado por WhatsApp');

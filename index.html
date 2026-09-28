@@ -8,59 +8,6 @@
 <title>Dulce Miga</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap">
 <style>
-/* ── PRINT STYLES ────────────────────────────── */
-@media print {
-  body > *:not(#print-order) { display: none !important; }
-  #print-order { display: block !important; }
-  @page { margin: 0; size: A4; }
-}
-#print-order {
-  display: none;
-  font-family: 'DM Sans', sans-serif;
-  background: #fff;
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-}
-#print-order .po-header {
-  background: #D4738A;
-  padding: 36px 32px 28px;
-  text-align: center;
-}
-#print-order .po-brand {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 32px; font-weight: 700; color: #fff; letter-spacing: -.5px;
-}
-#print-order .po-sub {
-  font-size: 11px; color: rgba(255,255,255,.7);
-  letter-spacing: .14em; text-transform: uppercase; margin-top: 4px;
-}
-#print-order .po-divider { width: 40px; height: 1px; background: rgba(255,255,255,.3); margin: 16px auto 12px; }
-#print-order .po-label { font-size: 11px; color: rgba(255,255,255,.6); letter-spacing: .1em; text-transform: uppercase; }
-#print-order .po-body { padding: 24px 32px; }
-#print-order .po-meta { display: flex; justify-content: space-between; font-size: 11px; color: #9C6B78; margin-bottom: 18px; }
-#print-order .po-section-label { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #C4A0AA; margin-bottom: 14px; }
-#print-order .po-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px dashed #F5D5DC; }
-#print-order .po-item:last-child { border-bottom: none; }
-#print-order .po-item-icon { width: 48px; height: 48px; border-radius: 10px; background: #FFF0F3; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-#print-order .po-item-info { flex: 1; }
-#print-order .po-item-name { font-size: 14px; font-weight: 600; color: #2D1B1E; margin-bottom: 2px; }
-#print-order .po-item-detail { font-size: 11px; color: #9C6B78; }
-#print-order .po-item-price { font-size: 15px; font-weight: 700; color: #2D1B1E; white-space: nowrap; }
-#print-order .po-totals { margin-top: 18px; border-top: 1px solid #F5D5DC; padding-top: 14px; }
-#print-order .po-row { display: flex; justify-content: space-between; font-size: 12px; color: #9C6B78; margin-bottom: 8px; }
-#print-order .po-row.green { color: #3B9A5A; }
-#print-order .po-total-box { background: #D4738A; border-radius: 12px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
-#print-order .po-total-label { font-family: 'Playfair Display', serif; font-size: 17px; color: #fff; font-weight: 700; }
-#print-order .po-total-value { font-size: 24px; font-weight: 700; color: #fff; }
-#print-order .po-pickup { margin-top: 20px; border-top: 1px solid #F5D5DC; padding-top: 16px; }
-#print-order .po-pickup-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
-#print-order .po-pickup-dot { width: 8px; height: 8px; border-radius: 50%; background: #D4738A; flex-shrink: 0; margin-top: 5px; }
-#print-order .po-pickup-name { font-size: 12px; font-weight: 600; color: #2D1B1E; }
-#print-order .po-pickup-time { font-size: 11px; color: #9C6B78; }
-#print-order .po-note { background: #FFF0F3; border-radius: 10px; padding: 12px 16px; margin-top: 16px; text-align: center; font-size: 11px; color: #9C6B78; }
-#print-order .po-footer { text-align: center; padding: 20px 0 10px; font-family: 'Playfair Display', serif; font-size: 14px; color: #C4A0AA; font-style: italic; }
-</style>
 <style>
 :root {
   --bg: #FFF0F3;
@@ -690,46 +637,6 @@ html, body {
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     PRINT ORDER
-════════════════════════════════════════════ -->
-<div id="print-order">
-  <div class="po-header">
-    <div class="po-brand">Dulce Miga</div>
-    <div class="po-sub">Repostería Artesanal · Talca</div>
-    <div class="po-divider"></div>
-    <div class="po-label">Comprobante de pedido</div>
-  </div>
-  <div class="po-body">
-    <div class="po-meta">
-      <span id="po-num">Pedido #001</span>
-      <span id="po-date"></span>
-    </div>
-    <div class="po-section-label">Productos</div>
-    <div id="po-items"></div>
-    <div class="po-totals">
-      <div class="po-row"><span>Subtotal</span><span id="po-subtotal"></span></div>
-      <div class="po-row green"><span>Retiro en punto de entrega</span><span>$0</span></div>
-      <div class="po-total-box">
-        <span class="po-total-label">Total</span>
-        <span class="po-total-value" id="po-total"></span>
-      </div>
-    </div>
-    <div class="po-pickup">
-      <div class="po-section-label">Puntos de retiro</div>
-      <div class="po-pickup-item">
-        <div class="po-pickup-dot"></div>
-        <div><div class="po-pickup-name">Plaza de Armas, Talca</div><div class="po-pickup-time">Martes y jueves · 16:00 – 17:00</div></div>
-      </div>
-      <div class="po-pickup-item">
-        <div class="po-pickup-dot"></div>
-        <div><div class="po-pickup-name">Universidad Santo Tomás, Talca</div><div class="po-pickup-time">Lunes y viernes · 12:00 – 14:00</div></div>
-      </div>
-    </div>
-    <div class="po-note">Pedidos con 48 h de anticipación &nbsp;·&nbsp; <strong style="color:#D4738A;">+56 9 8444-0866</strong></div>
-    <div class="po-footer">Hecho con amor ♡</div>
-  </div>
-</div>
 
 <!-- ═══════════════════════════════════════════
      TOAST
@@ -1172,254 +1079,47 @@ renderGrid('homeGrid', 'all', 'homeCount', true);
 renderGrid('catalogGrid', 'all', 'catalogCount', false);
 updateCartBadges();
 
-// ── SHARE ORDER (imagen → WhatsApp) ───────────
-function fillPrintOrder() {
-  const now = new Date();
-  const fecha = now.toLocaleDateString('es-CL', {day:'2-digit', month:'short', year:'numeric'});
-  const hora = now.toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'});
-  document.getElementById('po-num').textContent = 'Pedido #' + (Math.floor(Math.random()*900)+100);
-  document.getElementById('po-date').textContent = fecha + ' · ' + hora;
-  const subtotal = cartTotal();
-  document.getElementById('po-subtotal').textContent = '$' + subtotal.toLocaleString('es-CL');
-  document.getElementById('po-total').textContent = '$' + subtotal.toLocaleString('es-CL');
-  const emojis = {pay:'🍰',queque:'🎂',brownie:'🍫',galleta:'🍪',especial:'🍓'};
-  document.getElementById('po-items').innerHTML = cart.map(i => `
-    <div class="po-item">
-      <div class="po-item-icon">${emojis[i.product.category]||'🍰'}</div>
-      <div class="po-item-info">
-        <div class="po-item-name">${i.product.name}</div>
-        <div class="po-item-detail">${i.sizeName} · ${i.qty} unidad${i.qty>1?'es':''}</div>
-      </div>
-      <div class="po-item-price">$${(i.sizePrice*i.qty).toLocaleString('es-CL')}</div>
-    </div>`).join('');
-}
+// ── SHARE ORDER (WhatsApp) ────────────────────
 
-function generateReceiptCanvas() {
-  const W = 640, PAD = 48;
-  const ACCENT = '#D4738A', LIGHT = '#FFF0F3', MUTED = '#9C6B78', FAINT = '#F5D5DC', DARK = '#2D1B1E';
-  const emojis = {pay:'🍰',queque:'🎂',brownie:'🍫',galleta:'🍪',especial:'🍓'};
-  const now = new Date();
-  const fecha = now.toLocaleDateString('es-CL',{day:'2-digit',month:'short',year:'numeric'}) + ' · ' + now.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
-  const num = Math.floor(Math.random()*900)+100;
-  const subtotal = cartTotal();
-
-  const ITEM_H = 80;
-  const BODY_START = 180;
-  const ITEMS_START = BODY_START + 90;
-  const ITEMS_END = ITEMS_START + cart.length * ITEM_H + 10;
-  const TOTALS_H = 140;
-  const PICKUP_H = 120;
-  const FOOTER_H = 80;
-  const H = ITEMS_END + TOTALS_H + PICKUP_H + FOOTER_H;
-
-  const cv = document.createElement('canvas');
-  cv.width = W * 2; cv.height = H * 2;
-  cv.style.width = W + 'px'; cv.style.height = H + 'px';
-  const ctx = cv.getContext('2d');
-  ctx.scale(2, 2);
-
-  function roundRect(x, y, w, h, r, fill) {
-    ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.lineTo(x+w-r, y); ctx.arcTo(x+w, y, x+w, y+r, r);
-    ctx.lineTo(x+w, y+h-r); ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
-    ctx.lineTo(x+r, y+h); ctx.arcTo(x, y+h, x, y+h-r, r);
-    ctx.lineTo(x, y+r); ctx.arcTo(x, y, x+r, y, r);
-    ctx.closePath();
-    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
-  }
-
-  // Background
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, W, H);
-
-  // Header
-  ctx.fillStyle = ACCENT;
-  ctx.fillRect(0, 0, W, 170);
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 30px Georgia, serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('Dulce Miga', W/2, 68);
-  ctx.font = '11px DM Sans, sans-serif';
-  ctx.globalAlpha = .7;
-  ctx.fillText('REPOSTERÍA ARTESANAL · TALCA', W/2, 92);
-  ctx.globalAlpha = .3;
-  ctx.fillRect(W/2-24, 105, 48, 1);
-  ctx.globalAlpha = .6;
-  ctx.font = '10px DM Sans, sans-serif';
-  ctx.fillText('COMPROBANTE DE PEDIDO', W/2, 125);
-  ctx.globalAlpha = 1;
-
-  // Meta
-  ctx.textAlign = 'left';
-  ctx.fillStyle = MUTED;
-  ctx.font = '11px DM Sans, sans-serif';
-  ctx.fillText('Pedido #' + num, PAD, BODY_START + 28);
-  ctx.textAlign = 'right';
-  ctx.fillText(fecha, W - PAD, BODY_START + 28);
-
-  // Divider
-  ctx.fillStyle = FAINT;
-  ctx.fillRect(PAD, BODY_START + 44, W - PAD*2, 1);
-
-  // Section label
-  ctx.textAlign = 'left';
-  ctx.fillStyle = '#C4A0AA';
-  ctx.font = '600 10px DM Sans, sans-serif';
-  ctx.fillText('PRODUCTOS', PAD, ITEMS_START - 14);
-
-  // Items
-  cart.forEach((item, i) => {
-    const y = ITEMS_START + i * ITEM_H;
-    // icon bg
-    roundRect(PAD, y + 8, 52, 52, 10, LIGHT);
-    // emoji
-    ctx.font = '24px serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(emojis[item.product.category]||'🍰', PAD + 26, y + 42);
-    // name
-    ctx.textAlign = 'left';
-    ctx.fillStyle = DARK;
-    ctx.font = '600 13px DM Sans, sans-serif';
-    ctx.fillText(item.product.name, PAD + 64, y + 26);
-    // detail
-    ctx.fillStyle = MUTED;
-    ctx.font = '11px DM Sans, sans-serif';
-    ctx.fillText(item.sizeName + ' · ' + item.qty + (item.qty>1?' unidades':' unidad'), PAD + 64, y + 44);
-    // price
-    ctx.textAlign = 'right';
-    ctx.fillStyle = DARK;
-    ctx.font = '700 14px DM Sans, sans-serif';
-    ctx.fillText('$' + (item.sizePrice*item.qty).toLocaleString('es-CL'), W - PAD, y + 36);
-    // divider
-    if (i < cart.length - 1) {
-      ctx.setLineDash([4, 4]);
-      ctx.strokeStyle = FAINT;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(PAD, y + ITEM_H); ctx.lineTo(W - PAD, y + ITEM_H);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-  });
-
-  // Totals
-  const ty = ITEMS_END + 10;
-  ctx.fillStyle = FAINT;
-  ctx.fillRect(PAD, ty, W - PAD*2, 1);
-  ctx.textAlign = 'left';
-  ctx.fillStyle = MUTED;
-  ctx.font = '12px DM Sans, sans-serif';
-  ctx.fillText('Subtotal', PAD, ty + 26);
-  ctx.textAlign = 'right';
-  ctx.fillText('$' + subtotal.toLocaleString('es-CL'), W - PAD, ty + 26);
-  ctx.textAlign = 'left';
-  ctx.fillStyle = '#3B9A5A';
-  ctx.fillText('Retiro en punto de entrega', PAD, ty + 48);
-  ctx.textAlign = 'right';
-  ctx.fillText('$0', W - PAD, ty + 48);
-  // Total box
-  roundRect(PAD, ty + 62, W - PAD*2, 46, 12, ACCENT);
-  ctx.fillStyle = '#ffffff';
-  ctx.textAlign = 'left';
-  ctx.font = 'bold 16px Georgia, serif';
-  ctx.fillText('Total', PAD + 18, ty + 92);
-  ctx.textAlign = 'right';
-  ctx.font = '700 22px DM Sans, sans-serif';
-  ctx.fillText('$' + subtotal.toLocaleString('es-CL'), W - PAD - 18, ty + 92);
-
-  // Pickup
-  const py = ty + 126;
-  ctx.fillStyle = FAINT;
-  ctx.fillRect(PAD, py, W - PAD*2, 1);
-  ctx.fillStyle = '#C4A0AA';
-  ctx.textAlign = 'left';
-  ctx.font = '600 10px DM Sans, sans-serif';
-  ctx.fillText('PUNTOS DE RETIRO', PAD, py + 22);
-  [[' Plaza de Armas, Talca','Martes y jueves · 16:00 – 17:00'],[' Univ. Santo Tomás, Talca','Lunes y viernes · 12:00 – 14:00']].forEach(([name, time], i) => {
-    const ry = py + 40 + i * 38;
-    ctx.beginPath(); ctx.arc(PAD + 5, ry - 3, 5, 0, Math.PI*2);
-    ctx.fillStyle = ACCENT; ctx.fill();
-    ctx.fillStyle = DARK; ctx.font = '600 12px DM Sans, sans-serif';
-    ctx.fillText(name, PAD + 18, ry);
-    ctx.fillStyle = MUTED; ctx.font = '11px DM Sans, sans-serif';
-    ctx.fillText(time, PAD + 18, ry + 16);
-  });
-
-  // Note
-  const ny = py + 120;
-  roundRect(PAD, ny, W - PAD*2, 36, 10, LIGHT);
-  ctx.fillStyle = MUTED; ctx.textAlign = 'center';
-  ctx.font = '11px DM Sans, sans-serif';
-  ctx.fillText('Pedidos con 48 h de anticipación  ·  +56 9 8444-0866', W/2, ny + 22);
-
-  // Footer
-  ctx.fillStyle = '#C4A0AA';
-  ctx.font = 'italic 13px Georgia, serif';
-  ctx.fillText('Hecho con amor ♡', W/2, ny + 64);
-
-  return cv;
-}
-
-async function shareOrderWhatsApp() {
+function shareOrderWhatsApp() {
   if (cart.length === 0) return;
-  const btn = document.getElementById('checkoutBtn');
-  const btnOriginal = btn.innerHTML;
-  btn.textContent = 'Generando...';
-  btn.disabled = true;
-  try {
-    const canvas = generateReceiptCanvas();
-    const dataURL = canvas.toDataURL('image/png');
-    showReceiptModal(dataURL);
-  } catch(e) {
-    fallbackWhatsApp();
-  } finally {
-    btn.innerHTML = btnOriginal;
-    btn.disabled = false;
-  }
-}
+  const now = new Date();
+  const fecha = now.toLocaleDateString('es-CL', {day:'2-digit', month:'long', year:'numeric'});
+  const hora = now.toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'});
+  const num = Math.floor(Math.random()*900)+100;
+  const emojis = {pay:'🍰', queque:'🎂', brownie:'🍫', galleta:'🍪', especial:'🌸'};
 
-function showReceiptModal(dataURL) {
-  const existing = document.getElementById('receiptModal');
-  if (existing) existing.remove();
+  let msg = '';
+  msg += `🌸 *DULCE MIGA* 🌸\n`;
+  msg += `_Repostería Artesanal · Talca_\n`;
+  msg += `─────────────────────\n`;
+  msg += `📋 *Pedido #${num}*\n`;
+  msg += `📅 ${fecha} · ${hora}\n`;
+  msg += `─────────────────────\n\n`;
 
-  const waMsg = encodeURIComponent('Hola! Te envío mi comprobante de pedido 👇');
-  const waURL = 'https://wa.me/56984440866?text=' + waMsg;
+  msg += `🛒 *PRODUCTOS*\n\n`;
+  cart.forEach(i => {
+    const emoji = emojis[i.product.category] || '🍰';
+    msg += `${emoji} *${i.product.name}*\n`;
+    msg += `   ${i.sizeName}  ×${i.qty}  →  *$${(i.sizePrice * i.qty).toLocaleString('es-CL')}*\n\n`;
+  });
 
-  const modal = document.createElement('div');
-  modal.id = 'receiptModal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.7);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;overflow-y:auto;';
-  modal.innerHTML = `
-    <div style="background:#fff;border-radius:20px;width:100%;max-width:480px;overflow:hidden;margin:auto;">
-      <div style="background:#D4738A;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;">
-        <span style="color:#fff;font-weight:700;font-size:15px;">Comprobante listo</span>
-        <button onclick="document.getElementById('receiptModal').remove()" style="background:rgba(255,255,255,.25);border:none;color:#fff;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;line-height:1;">✕</button>
-      </div>
-      <img src="${dataURL}" style="width:100%;display:block;" alt="Comprobante">
-      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
-        <p style="margin:0;font-size:13px;color:#9C6B78;text-align:center;line-height:1.5;">
-          1. Descarga la imagen 👇<br>
-          2. Abre WhatsApp y adjúntala
-        </p>
-        <a href="${dataURL}" download="pedido-dulce-miga.png"
-          style="display:block;text-align:center;background:#D4738A;color:#fff;padding:13px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;">
-          ⬇️ Guardar comprobante
-        </a>
-        <a href="${waURL}" target="_blank"
-          onclick="setTimeout(()=>{cart=[];updateCartBadges();renderCart();document.getElementById('receiptModal').remove();},500)"
-          style="display:block;text-align:center;background:#25D366;color:#fff;padding:13px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;">
-          Abrir WhatsApp →
-        </a>
-      </div>
-    </div>`;
-  document.body.appendChild(modal);
-}
+  msg += `─────────────────────\n`;
+  msg += `💰 *TOTAL: $${cartTotal().toLocaleString('es-CL')}*\n`;
+  msg += `🚚 Retiro en punto de entrega: *$0*\n`;
+  msg += `─────────────────────\n\n`;
 
-function fallbackWhatsApp() {
-  let msg = '*NUEVO PEDIDO - Dulce Miga*\n\n';
-  msg += cart.map(i => `*${i.product.name}*\n${i.sizeName} x${i.qty} - $${(i.sizePrice*i.qty).toLocaleString('es-CL')}`).join('\n\n');
-  msg += `\n\n*Total: $${cartTotal().toLocaleString('es-CL')}*\n\nCual es la disponibilidad?`;
+  msg += `📍 *PUNTOS DE RETIRO*\n`;
+  msg += `• Plaza de Armas, Talca\n`;
+  msg += `  _Mar y jue · 16:00 – 17:00_\n`;
+  msg += `• Univ. Santo Tomás, Talca\n`;
+  msg += `  _Lun y vie · 12:00 – 14:00_\n\n`;
+
+  msg += `_¿Cuál es tu disponibilidad?_ 😊`;
+
   window.open('https://wa.me/56984440866?text=' + encodeURIComponent(msg), '_blank');
+  cart = []; updateCartBadges(); renderCart();
+  showToast('Pedido enviado por WhatsApp');
 }
 
 // ── HERO CAROUSEL ─────────────────────────────

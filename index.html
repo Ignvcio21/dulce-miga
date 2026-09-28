@@ -1250,11 +1250,11 @@ setInterval(() => goSlide((heroIdx + 1) % heroSlides), 5000);
 //  REWARDS CATALOG
 // ══════════════════════════════════════════════
 const REWARDS = [
-  { id:'galleta', name:'Galleta gratis', coins:40, emoji:'🍪' },
-  { id:'brownie', name:'Brownie personal gratis', coins:50, emoji:'🍫' },
-  { id:'descuento10', name:'10% de descuento', coins:60, emoji:'🏷️' },
-  { id:'pay', name:'Pay personal gratis', coins:80, emoji:'🍰' },
-  { id:'descuento20', name:'20% de descuento', coins:100, emoji:'🎁' },
+  { id:'galleta', name:'Galleta gratis', coins:40, emoji:'🍪', icon:'icon-galleta.png' },
+  { id:'brownie', name:'Brownie personal gratis', coins:50, emoji:'🍫', icon:'icon-brownie.png' },
+  { id:'descuento10', name:'10% de descuento', coins:60, emoji:'🏷️', icon:'icon-descuento.png' },
+  { id:'pay', name:'Pay personal gratis', coins:80, emoji:'🍰', icon:'icon-pay.png' },
+  { id:'descuento20', name:'20% de descuento', coins:100, emoji:'🎁', icon:'icon-regalo.png' },
 ];
 
 // ══════════════════════════════════════════════
@@ -1489,7 +1489,7 @@ function renderProfilePage() {
   const rewardsHtml = REWARDS.map(r => {
     const canAfford = coins >= r.coins;
     return `<div class="reward-item">
-      <div class="reward-emoji">${r.emoji}</div>
+      <div class="reward-emoji"><img src="${r.icon}" alt="${r.name}" style="width:38px;height:38px;object-fit:contain;"></div>
       <div class="reward-info">
         <div class="reward-name">${r.name}</div>
         <div class="reward-coins">🪙 ${r.coins} Duls Coin</div>
@@ -1520,7 +1520,7 @@ function renderProfilePage() {
           <span>${coins}/${nextReward.coins}</span>
         </div>
         <div class="progress-bar"><div class="progress-fill" style="width:${progressPct}%"></div></div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Próximo: ${nextReward.emoji} ${nextReward.name}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:4px;">Próximo: <img src="${nextReward.icon}" style="width:16px;height:16px;object-fit:contain;"> ${nextReward.name}</div>
       </div>
     </div>
 

@@ -1254,7 +1254,7 @@ const REWARDS = [
   { id:'brownie', name:'Brownie personal gratis', coins:50, emoji:'🍫', icon:'icon-brownie.png' },
   { id:'descuento10', name:'10% de descuento', coins:60, emoji:'🏷️', icon:'icon-descuento.png' },
   { id:'pay', name:'Pay personal gratis', coins:80, emoji:'🍰', icon:'icon-pay.png' },
-  { id:'descuento20', name:'20% de descuento', coins:100, emoji:'🎁', icon:'icon-regalo.png' },
+  { id:'descuento20', name:'20% de descuento', coins:100, emoji:'🎁', icon:'icon-regalo.png', iconSize:60 },
 ];
 
 // ══════════════════════════════════════════════
@@ -1489,7 +1489,7 @@ function renderProfilePage() {
   const rewardsHtml = REWARDS.map(r => {
     const canAfford = coins >= r.coins;
     return `<div class="reward-item">
-      <div class="reward-emoji"><img src="${r.icon}" alt="${r.name}" style="width:50px;height:50px;object-fit:contain;"></div>
+      <div class="reward-emoji"><img src="${r.icon}" alt="${r.name}" style="width:${r.iconSize||50}px;height:${r.iconSize||50}px;object-fit:contain;"></div>
       <div class="reward-info">
         <div class="reward-name">${r.name}</div>
         <div class="reward-coins"><img src="duls-coin.png" style="width:20px;height:20px;object-fit:contain;vertical-align:middle;"> ${r.coins} Duls Coin</div>

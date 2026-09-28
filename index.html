@@ -1313,12 +1313,16 @@ async function registerUser(name, email, password, phone) {
 async function handleForgotPassword() {
   const email = document.getElementById('loginEmail').value.trim();
   const msgEl = document.getElementById('forgotMsg');
-  if (!email) { msgEl.textContent = 'Ingresa tu correo primero.'; return; }
+  msgEl.style.display = 'block';
+  if (!email) { msgEl.textContent = 'Ingresa tu correo primero.'; msgEl.style.color = '#c0392b'; return; }
+  msgEl.textContent = 'Enviando...'; msgEl.style.color = 'var(--text-muted)';
   try {
     await auth.sendPasswordResetEmail(email);
     msgEl.textContent = '✅ Te enviamos un correo para restablecer tu contraseña.';
+    msgEl.style.color = 'var(--accent-deep)';
   } catch(e) {
     msgEl.textContent = 'No encontramos una cuenta con ese correo.';
+    msgEl.style.color = '#c0392b';
   }
 }
 
@@ -1536,7 +1540,7 @@ function renderProfilePage() {
             <div class="auth-error" id="loginError"></div>
             <button class="auth-btn" onclick="handleLogin()">Iniciar sesión</button>
             <button type="button" onclick="handleForgotPassword()" style="background:none;border:none;color:var(--accent);font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;margin-top:4px;padding:4px 0;width:100%;text-align:center;">¿Olvidaste tu contraseña?</button>
-            <div class="auth-error" id="forgotMsg" style="color:var(--accent-deep);"></div>
+            <div id="forgotMsg" style="font-size:13px;color:var(--accent-deep);margin-top:6px;display:none;"></div>
           </div>
         </div>
         <!-- REGISTER FORM -->

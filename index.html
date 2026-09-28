@@ -1319,8 +1319,14 @@ async function handleForgotPassword() {
   const msgEl = document.getElementById('forgotMsg');
   msgEl.style.display = 'block';
   if (!email) { msgEl.textContent = 'Ingresa tu correo primero.'; msgEl.style.color = '#c0392b'; return; }
-  msgEl.textContent = 'Enviando...'; msgEl.style.color = 'var(--text-muted)';
+  msgEl.textContent = 'Verificando...'; msgEl.style.color = 'var(--text-muted)';
   try {
+    const snap = await db.collection('users').where('email', '==', email).limit(1).get();
+    if (snap.empty) {
+      msgEl.textContent = 'No encontramos una cuenta con ese correo.';
+      msgEl.style.color = '#c0392b';
+      return;
+    }
     await auth.sendPasswordResetEmail(email, {
       url: 'https://dulce-miga.vercel.app',
       handleCodeInApp: false
